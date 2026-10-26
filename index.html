@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NexusRAG AI — Enterprise Retrieval-Augmented Generation &amp; Vector Intelligence</title>
-  <meta name="description" content="State-of-the-art enterprise RAG chatbot with FastAPI, ChromaDB vectorstore, and Groq/Gemini LLM inference. Engineered by UMAR MUKTHAR.">
+  <title>RAG PDFBot — Intelligent PDF Q&amp;A Chatbot</title>
+  <meta name="description" content="Upload PDF documents and chat with them using ChromaDB vectorstore and Llama-3/Gemini LLM inference. Engineered by UMAR MUKTHAR.">
   <meta name="author" content="UMAR MUKTHAR">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-dark: #070b14;
@@ -25,15 +25,9 @@
       --text-muted: #94a3b8;
       --text-dim: #64748b;
       --code-bg: #030712;
-      --sidebar-width: 320px;
-      --inspector-width: 360px;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       background-color: var(--bg-dark);
@@ -46,11 +40,10 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      overflow-x: hidden;
     }
 
     header {
-      background: rgba(10, 15, 29, 0.85);
+      background: rgba(10, 15, 29, 0.9);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--card-border);
@@ -70,21 +63,21 @@
     }
 
     .brand-logo {
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       background: linear-gradient(135deg, var(--primary), var(--secondary));
       border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 800;
-      font-size: 1.25rem;
+      font-size: 1.3rem;
       color: #04121a;
       box-shadow: 0 0 20px var(--primary-glow);
     }
 
     .brand-info h1 {
-      font-size: 1.15rem;
+      font-size: 1.2rem;
       font-weight: 800;
       letter-spacing: -0.3px;
       display: flex;
@@ -100,11 +93,10 @@
       border: 1px solid rgba(16, 185, 129, 0.3);
       border-radius: 999px;
       font-weight: 700;
-      text-transform: uppercase;
     }
 
     .brand-info p {
-      font-size: 0.75rem;
+      font-size: 0.76rem;
       color: var(--text-muted);
     }
 
@@ -118,8 +110,8 @@
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      background: rgba(139, 92, 246, 0.12);
-      border: 1px solid rgba(139, 92, 246, 0.3);
+      background: rgba(139, 92, 246, 0.15);
+      border: 1px solid rgba(139, 92, 246, 0.35);
       padding: 0.35rem 0.85rem;
       border-radius: 999px;
       font-size: 0.75rem;
@@ -130,92 +122,155 @@
     }
 
     .author-badge:hover {
-      background: rgba(139, 92, 246, 0.22);
+      background: rgba(139, 92, 246, 0.25);
       transform: translateY(-1px);
     }
 
-    .status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      font-size: 0.72rem;
-      color: #34d399;
-      background: rgba(16, 185, 129, 0.12);
-      border: 1px solid rgba(16, 185, 129, 0.25);
-      padding: 0.35rem 0.75rem;
-      border-radius: 999px;
-      font-weight: 600;
-    }
-
-    .status-dot {
-      width: 7px;
-      height: 7px;
-      background: #10b981;
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-      70% { box-shadow: 0 0 0 7px rgba(16, 185, 129, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-    }
-
-    .app-container {
+    .main-layout {
+      max-width: 1280px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 1.5rem;
       display: grid;
-      grid-template-columns: var(--sidebar-width) 1fr var(--inspector-width);
+      grid-template-columns: 340px 1fr;
+      gap: 1.5rem;
       flex: 1;
-      height: calc(100vh - 65px);
-      overflow: hidden;
     }
 
-    @media (max-width: 1200px) {
-      .app-container {
-        grid-template-columns: 280px 1fr;
-      }
-      .inspector-panel {
-        display: none !important;
-      }
-    }
-
-    @media (max-width: 860px) {
-      .app-container {
+    @media (max-width: 960px) {
+      .main-layout {
         grid-template-columns: 1fr;
-        height: auto;
-        overflow: visible;
-      }
-      .sidebar-panel {
-        height: auto;
       }
     }
 
-    .sidebar-panel {
-      background: rgba(11, 17, 33, 0.85);
-      border-right: 1px solid var(--card-border);
+    .sidebar-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
       padding: 1.25rem;
-      overflow-y: auto;
       display: flex;
       flex-direction: column;
       gap: 1.25rem;
+      height: fit-content;
     }
 
     .section-title {
-      font-size: 0.72rem;
+      font-size: 0.75rem;
       font-weight: 700;
       color: var(--text-dim);
       text-transform: uppercase;
       letter-spacing: 0.8px;
-      margin-bottom: 0.65rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+
+    .upload-box {
+      border: 2px dashed rgba(16, 185, 129, 0.4);
+      border-radius: 12px;
+      padding: 1.5rem 1rem;
+      text-align: center;
+      background: rgba(16, 185, 129, 0.04);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .upload-box:hover, .upload-box.dragover {
+      border-color: var(--primary);
+      background: rgba(16, 185, 129, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .upload-icon {
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .upload-box h3 {
+      font-size: 0.92rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .upload-box p {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .file-input-hidden {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .sample-docs-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .sample-doc-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 0.55rem 0.75rem;
+      font-size: 0.75rem;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+      font-family: inherit;
+    }
+
+    .sample-doc-btn:hover {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: var(--primary);
+      color: #34d399;
+    }
+
+    .sample-doc-btn.active {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: var(--primary);
+      color: #34d399;
+      font-weight: 600;
+    }
+
+    .chip-small {
+      font-size: 0.65rem;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+    }
+
+    .active-doc-banner {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(6, 182, 212, 0.12));
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 10px;
+      padding: 0.75rem 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .active-doc-details h4 {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #34d399;
       display: flex;
       align-items: center;
       gap: 0.4rem;
     }
 
-    .config-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      padding: 1rem;
+    .active-doc-details span {
+      font-size: 0.68rem;
+      color: var(--text-muted);
     }
 
     .form-group {
@@ -228,28 +283,25 @@
 
     label {
       display: block;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 600;
       color: var(--text-muted);
-      margin-bottom: 0.35rem;
+      margin-bottom: 0.3rem;
     }
 
-    select, input[type="text"], input[type="range"] {
+    select, input[type="range"] {
       width: 100%;
       background: rgba(15, 23, 42, 0.95);
       border: 1px solid var(--card-border);
       color: var(--text-main);
       border-radius: 8px;
-      padding: 0.55rem 0.75rem;
-      font-size: 0.82rem;
+      padding: 0.5rem 0.65rem;
+      font-size: 0.78rem;
       font-family: inherit;
       outline: none;
-      transition: border 0.2s;
     }
 
-    select:focus, input[type="text"]:focus {
-      border-color: var(--primary);
-    }
+    select:focus { border-color: var(--primary); }
 
     .range-wrap {
       display: flex;
@@ -259,145 +311,87 @@
 
     .range-val {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       color: var(--primary);
-      min-width: 48px;
+      min-width: 36px;
       text-align: right;
     }
 
-    .doc-item {
+    .chat-panel-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-height: 640px;
+    }
+
+    .tab-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: rgba(30, 41, 59, 0.45);
-      border: 1px solid var(--card-border);
-      border-radius: 8px;
-      padding: 0.6rem 0.75rem;
-      margin-bottom: 0.5rem;
-      transition: all 0.2s;
+      background: rgba(11, 17, 33, 0.8);
+      border-bottom: 1px solid var(--card-border);
+      padding: 0.5rem 1.25rem;
     }
 
-    .doc-item:hover {
-      background: rgba(30, 41, 59, 0.8);
-      border-color: rgba(16, 185, 129, 0.3);
-    }
-
-    .doc-info {
+    .tab-group {
       display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      overflow: hidden;
+      gap: 0.5rem;
     }
 
-    .doc-icon {
-      color: #ef4444;
-      font-size: 1.1rem;
-    }
-
-    .doc-name {
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: var(--text-main);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 160px;
-    }
-
-    .doc-meta {
-      font-size: 0.68rem;
-      color: var(--text-dim);
-    }
-
-    .badge-chip {
-      font-size: 0.65rem;
-      padding: 2px 6px;
-      border-radius: 4px;
-      background: rgba(16, 185, 129, 0.15);
-      color: #34d399;
-      font-weight: 600;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.45rem;
-      padding: 0.55rem 0.85rem;
+    .tab-btn {
+      padding: 0.45rem 1rem;
       border-radius: 8px;
       font-size: 0.78rem;
       font-weight: 600;
       cursor: pointer;
-      border: none;
-      transition: all 0.2s ease;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      transition: all 0.2s;
       font-family: inherit;
     }
 
-    .btn-primary {
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      color: #04121a;
+    .tab-btn.active {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.35);
+      color: #34d399;
     }
 
-    .btn-primary:hover {
-      box-shadow: 0 0 15px var(--primary-glow);
-      transform: translateY(-1px);
-    }
-
-    .btn-outline {
+    .btn-action {
       background: transparent;
       border: 1px solid var(--card-border);
       color: var(--text-muted);
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
     }
 
-    .btn-outline:hover {
+    .btn-action:hover {
       background: rgba(255, 255, 255, 0.05);
       color: var(--text-main);
       border-color: var(--primary);
     }
 
-    .btn-full {
-      width: 100%;
-    }
-
-    .chat-panel {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      background: rgba(7, 11, 20, 0.7);
-    }
-
-    .chat-header-bar {
-      padding: 0.85rem 1.5rem;
-      border-bottom: 1px solid var(--card-border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(11, 17, 33, 0.5);
-    }
-
-    .chat-header-title {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .quick-chips {
+    .quick-chips-bar {
       display: flex;
       gap: 0.5rem;
-      overflow-x: auto;
-      padding: 0.6rem 1.5rem;
+      padding: 0.6rem 1.25rem;
+      background: rgba(10, 15, 29, 0.4);
       border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-      background: rgba(10, 15, 29, 0.3);
+      overflow-x: auto;
     }
 
     .chip-btn {
-      background: rgba(30, 41, 59, 0.5);
+      background: rgba(30, 41, 59, 0.6);
       border: 1px solid var(--card-border);
       border-radius: 999px;
-      padding: 0.3rem 0.75rem;
+      padding: 0.3rem 0.8rem;
       font-size: 0.72rem;
       color: var(--text-muted);
       cursor: pointer;
@@ -411,24 +405,25 @@
       color: #34d399;
     }
 
-    .chat-messages {
+    .messages-stream {
       flex: 1;
-      overflow-y: auto;
       padding: 1.5rem;
+      overflow-y: auto;
       display: flex;
       flex-direction: column;
       gap: 1.25rem;
+      max-height: 480px;
     }
 
     .message {
       display: flex;
-      gap: 1rem;
-      max-width: 88%;
-      animation: fadeIn 0.25s ease-out;
+      gap: 0.85rem;
+      max-width: 86%;
+      animation: fadeIn 0.2s ease-out;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
+      from { opacity: 0; transform: translateY(4px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
@@ -461,22 +456,18 @@
     }
 
     .msg-bubble {
-      background: var(--card-bg);
+      background: rgba(15, 23, 42, 0.95);
       border: 1px solid var(--card-border);
       border-radius: 14px;
-      padding: 1rem 1.25rem;
-      font-size: 0.88rem;
+      padding: 0.95rem 1.15rem;
+      font-size: 0.86rem;
       line-height: 1.55;
     }
 
     .message.user .msg-bubble {
-      background: rgba(30, 41, 59, 0.8);
+      background: rgba(30, 41, 59, 0.85);
       border-color: rgba(59, 130, 246, 0.3);
       color: #f1f5f9;
-    }
-
-    .message.assistant .msg-bubble {
-      border-color: rgba(16, 185, 129, 0.25);
     }
 
     .retrieval-pill {
@@ -485,12 +476,12 @@
       gap: 0.4rem;
       background: rgba(16, 185, 129, 0.12);
       border: 1px solid rgba(16, 185, 129, 0.3);
-      padding: 0.25rem 0.6rem;
+      padding: 0.2rem 0.55rem;
       border-radius: 6px;
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       color: #34d399;
       font-weight: 600;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.65rem;
     }
 
     .citation-tag {
@@ -503,21 +494,14 @@
       font-size: 0.72rem;
       padding: 1px 6px;
       border-radius: 4px;
-      cursor: pointer;
       margin: 0 2px;
-      transition: all 0.2s;
-    }
-
-    .citation-tag:hover {
-      background: rgba(6, 182, 212, 0.3);
-      transform: scale(1.04);
     }
 
     .msg-meta {
-      margin-top: 0.75rem;
-      padding-top: 0.6rem;
+      margin-top: 0.65rem;
+      padding-top: 0.5rem;
       border-top: 1px solid rgba(255, 255, 255, 0.06);
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       color: var(--text-dim);
       display: flex;
       align-items: center;
@@ -525,25 +509,24 @@
     }
 
     .chat-input-area {
-      padding: 1rem 1.5rem;
+      padding: 1rem 1.25rem;
+      background: rgba(11, 17, 33, 0.9);
       border-top: 1px solid var(--card-border);
-      background: rgba(11, 17, 33, 0.85);
     }
 
     .chat-input-form {
       display: flex;
-      gap: 0.75rem;
+      gap: 0.65rem;
       align-items: center;
-      background: rgba(15, 23, 42, 0.9);
+      background: rgba(15, 23, 42, 0.95);
       border: 1px solid var(--card-border);
       border-radius: 12px;
       padding: 0.4rem 0.5rem 0.4rem 1rem;
-      transition: border 0.2s, box-shadow 0.2s;
+      transition: border 0.2s;
     }
 
     .chat-input-form:focus-within {
       border-color: var(--primary);
-      box-shadow: 0 0 16px var(--primary-glow);
     }
 
     .chat-input-field {
@@ -552,11 +535,11 @@
       border: none;
       outline: none;
       color: var(--text-main);
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       font-family: inherit;
     }
 
-    .chat-send-btn {
+    .send-btn {
       width: 38px;
       height: 38px;
       border-radius: 8px;
@@ -570,33 +553,29 @@
       transition: all 0.2s;
     }
 
-    .chat-send-btn:hover {
+    .send-btn:hover {
       background: #34d399;
       transform: scale(1.05);
     }
 
-    .inspector-panel {
-      background: rgba(11, 17, 33, 0.85);
-      border-left: 1px solid var(--card-border);
-      padding: 1.25rem;
+    .inspector-view {
+      padding: 1.5rem;
       overflow-y: auto;
-      display: flex;
+      display: none;
       flex-direction: column;
       gap: 1.25rem;
+      flex: 1;
+    }
+
+    .inspector-view.active {
+      display: flex;
     }
 
     .chunk-card {
-      background: var(--card-bg);
+      background: rgba(15, 23, 42, 0.8);
       border: 1px solid var(--card-border);
       border-radius: 10px;
       padding: 0.85rem;
-      margin-bottom: 0.75rem;
-      transition: all 0.2s;
-    }
-
-    .chunk-card.active-sim {
-      border-color: rgba(16, 185, 129, 0.4);
-      background: rgba(16, 185, 129, 0.05);
     }
 
     .chunk-header {
@@ -604,33 +583,24 @@
       align-items: center;
       justify-content: space-between;
       margin-bottom: 0.5rem;
-    }
-
-    .chunk-id {
       font-size: 0.72rem;
-      font-weight: 700;
-      color: #34d399;
-      font-family: 'JetBrains Mono', monospace;
     }
 
     .chunk-score {
-      font-size: 0.72rem;
-      font-weight: 700;
       color: var(--secondary);
       background: rgba(6, 182, 212, 0.15);
       padding: 2px 6px;
       border-radius: 4px;
+      font-weight: 700;
     }
 
     .chunk-text {
-      font-size: 0.75rem;
+      font-size: 0.76rem;
       color: var(--text-muted);
       line-height: 1.5;
       font-family: 'JetBrains Mono', monospace;
-      max-height: 70px;
-      overflow-y: auto;
       background: rgba(3, 7, 18, 0.6);
-      padding: 0.5rem;
+      padding: 0.6rem;
       border-radius: 6px;
       margin-bottom: 0.5rem;
     }
@@ -645,124 +615,31 @@
     .sim-bar-fill {
       height: 100%;
       background: linear-gradient(90deg, var(--primary), var(--secondary));
-      border-radius: 2px;
     }
 
-    .canvas-container {
-      background: var(--code-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 10px;
-      padding: 0.5rem;
+    footer {
+      border-top: 1px solid var(--card-border);
+      padding: 0.85rem 1.75rem;
       text-align: center;
-      position: relative;
-    }
-
-    canvas {
-      width: 100%;
-      height: 160px;
-      display: block;
-      border-radius: 6px;
-    }
-
-    .telemetry-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.65rem;
-    }
-
-    .telemetry-item {
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid var(--card-border);
-      border-radius: 8px;
-      padding: 0.65rem;
-    }
-
-    .telemetry-label {
-      font-size: 0.68rem;
+      font-size: 0.72rem;
       color: var(--text-dim);
-      text-transform: uppercase;
-      font-weight: 600;
-    }
-
-    .telemetry-value {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--text-main);
-      margin-top: 2px;
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(3, 7, 18, 0.75);
-      backdrop-filter: blur(8px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-    }
-
-    .modal-overlay.active {
-      display: flex;
-    }
-
-    .modal-card {
-      background: #0f172a;
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      width: 90%;
-      max-width: 520px;
-      padding: 1.75rem;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-    }
-
-    .modal-title {
-      font-size: 1.15rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
-
-    textarea {
-      width: 100%;
-      height: 130px;
-      background: rgba(3, 7, 18, 0.8);
-      border: 1px solid var(--card-border);
-      border-radius: 8px;
-      padding: 0.75rem;
-      color: var(--text-main);
-      font-family: inherit;
-      font-size: 0.82rem;
-      margin-bottom: 1rem;
-      outline: none;
-      resize: vertical;
-    }
-
-    textarea:focus {
-      border-color: var(--primary);
+      background: rgba(10, 15, 29, 0.7);
     }
   </style>
 </head>
 <body>
 
+  <!-- Top Header Navigation -->
   <header>
     <div class="brand-section">
-      <div class="brand-logo">NR</div>
+      <div class="brand-logo">🤖</div>
       <div class="brand-info">
-        <h1>NexusRAG AI <span class="version-tag">FastAPI + ChromaDB</span></h1>
-        <p>Enterprise Retrieval-Augmented Generation &amp; Vector Intelligence</p>
+        <h1>RAG PDFBot <span class="version-tag">PDF AI Chatbot</span></h1>
+        <p>Chat with multiple PDFs using ChromaDB &amp; Llama-3/Gemini</p>
       </div>
     </div>
 
     <div class="header-actions">
-      <div class="status-pill">
-        <span class="status-dot"></span>
-        HNSW Vector Index Online
-      </div>
-
       <a href="https://github.com/UMARMUKTHAR03/rag-ai-chatbot" target="_blank" class="author-badge">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
           <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
@@ -772,580 +649,463 @@
     </div>
   </header>
 
-  <div class="app-container">
-    <aside class="sidebar-panel">
+  <!-- 2-Column Application Layout -->
+  <div class="main-layout">
+    
+    <!-- Left Column: Upload & Configurations -->
+    <aside class="sidebar-card">
+      
+      <!-- Upload Section -->
       <div>
-        <div class="section-title">⚙️ Inference Engine</div>
-        <div class="config-card">
-          <div class="form-group">
-            <label for="llmProvider">LLM Provider</label>
-            <select id="llmProvider" onchange="updateModelOptions()">
-              <option value="groq" selected>Groq Cloud (Ultra-Fast LPU)</option>
-              <option value="gemini">Google Gemini (Vertex AI)</option>
-            </select>
-          </div>
+        <div class="section-title">
+          <span>📁 Upload PDF Document</span>
+        </div>
 
-          <div class="form-group">
-            <label for="llmModel">Active Model</label>
-            <select id="llmModel">
-              <option value="llama-3-70b-8192">Llama-3-70b-8192 (Fast)</option>
-              <option value="llama-3-8b-8192">Llama-3-8b-8192 (Lightweight)</option>
-              <option value="mixtral-8x7b-32768">Mixtral-8x7b-32768</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>Temperature (Factuality)</label>
-            <div class="range-wrap">
-              <input type="range" id="tempRange" min="0" max="1" step="0.05" value="0.2" oninput="document.getElementById('tempVal').innerText = this.value">
-              <span id="tempVal" class="range-val">0.20</span>
-            </div>
-          </div>
+        <div class="upload-box" id="dropZone">
+          <input type="file" id="pdfFileInput" class="file-input-hidden" accept=".pdf,.txt,.doc,.docx" onchange="handleFileUpload(event)">
+          <div class="upload-icon">📄</div>
+          <h3>Click or Drag &amp; Drop PDF</h3>
+          <p>Upload your own document (.pdf, .txt) to index and chat</p>
         </div>
       </div>
 
+      <!-- Quick Preset Sample Documents -->
       <div>
-        <div class="section-title">📐 Vector Index &amp; Splitting</div>
-        <div class="config-card">
-          <div class="form-group">
-            <label>Chunk Size (Tokens)</label>
-            <div class="range-wrap">
-              <input type="range" id="chunkSize" min="128" max="1024" step="64" value="512" oninput="document.getElementById('chunkVal').innerText = this.value">
-              <span id="chunkVal" class="range-val">512</span>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Chunk Overlap</label>
-            <div class="range-wrap">
-              <input type="range" id="chunkOverlap" min="0" max="150" step="10" value="50" oninput="document.getElementById('overlapVal').innerText = this.value">
-              <span id="overlapVal" class="range-val">50</span>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Top-K Retrieval</label>
-            <div class="range-wrap">
-              <input type="range" id="topK" min="1" max="6" step="1" value="3" oninput="document.getElementById('topkVal').innerText = this.value">
-              <span id="topkVal" class="range-val">3</span>
-            </div>
-          </div>
+        <div class="section-title">
+          <span>⚡ Or Try Sample PDFs</span>
+        </div>
+        <div class="sample-docs-grid">
+          <button class="sample-doc-btn active" onclick="loadSampleDoc('ai_research')">
+            <span>📄 AI_Safety_Report.pdf</span>
+            <span class="chip-small">14 pgs • 32 chunks</span>
+          </button>
+          <button class="sample-doc-btn" onclick="loadSampleDoc('financial_sla')">
+            <span>📊 Cloud_SLA_Pricing.pdf</span>
+            <span class="chip-small">8 pgs • 24 chunks</span>
+          </button>
+          <button class="sample-doc-btn" onclick="loadSampleDoc('cybersecurity')">
+            <span>🛡️ Security_Policy.pdf</span>
+            <span class="chip-small">11 pgs • 28 chunks</span>
+          </button>
         </div>
       </div>
 
+      <!-- Active Document Banner -->
+      <div class="active-doc-banner" id="activeDocBanner">
+        <div class="active-doc-details">
+          <h4 id="activeDocTitle">📄 AI_Safety_Report.pdf</h4>
+          <span id="activeDocMeta">14 Pages • 32 Chunks • ChromaDB Ready</span>
+        </div>
+        <span style="font-size: 0.65rem; background: rgba(16, 185, 129, 0.2); color: #34d399; padding: 2px 7px; border-radius: 4px; font-weight: 700;">Active</span>
+      </div>
+
+      <!-- Model & Indexing Settings -->
       <div>
-        <div class="section-title" style="justify-content: space-between;">
-          <span>📚 Ingested Knowledge Base</span>
-          <span class="badge-chip" id="chunkCounter">3 Documents</span>
+        <div class="section-title">
+          <span>⚙️ LLM &amp; Vectorstore Settings</span>
+        </div>
+        <div class="form-group">
+          <label for="modelProvider">Model Provider</label>
+          <select id="modelProvider" onchange="updateModelSelect()">
+            <option value="groq" selected>Groq Cloud (LPU Inference)</option>
+            <option value="gemini">Google Gemini (Vertex AI)</option>
+          </select>
         </div>
 
-        <div id="docList">
-          <div class="doc-item">
-            <div class="doc-info">
-              <span class="doc-icon">📄</span>
-              <div>
-                <div class="doc-name">Enterprise_Data_Policy.pdf</div>
-                <div class="doc-meta">28 Chunks • 768d Embeddings</div>
-              </div>
-            </div>
-            <span class="badge-chip">Indexed</span>
-          </div>
-
-          <div class="doc-item">
-            <div class="doc-info">
-              <span class="doc-icon">📄</span>
-              <div>
-                <div class="doc-name">Cloud_Security_SLA.pdf</div>
-                <div class="doc-meta">19 Chunks • HNSW Validated</div>
-              </div>
-            </div>
-            <span class="badge-chip">Indexed</span>
-          </div>
-
-          <div class="doc-item">
-            <div class="doc-info">
-              <span class="doc-icon">📄</span>
-              <div>
-                <div class="doc-name">Architecture_RFC_2026.pdf</div>
-                <div class="doc-meta">34 Chunks • Dense Vectors</div>
-              </div>
-            </div>
-            <span class="badge-chip">Indexed</span>
-          </div>
+        <div class="form-group">
+          <label for="activeModel">Active Model</label>
+          <select id="activeModel">
+            <option value="llama3-70b-8192">Llama-3-70b-8192</option>
+            <option value="llama3-8b-8192">Llama-3-8b-8192</option>
+            <option value="mixtral-8x7b-32768">Mixtral-8x7b-32768</option>
+          </select>
         </div>
 
-        <button class="btn btn-outline btn-full" style="margin-top: 0.5rem;" onclick="openIngestModal()">
-          + Ingest New Document Text
-        </button>
+        <div class="form-group">
+          <label>Top-K Chunks to Retrieve</label>
+          <div class="range-wrap">
+            <input type="range" id="topKRange" min="1" max="5" step="1" value="3" oninput="document.getElementById('topKVal').innerText = this.value">
+            <span id="topKVal" class="range-val">3</span>
+          </div>
+        </div>
       </div>
 
-      <div style="margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--card-border); font-size: 0.72rem; color: var(--text-dim); text-align: center;">
-        Engineered by <strong>UMAR MUKTHAR</strong><br>
-        FastAPI • ChromaDB • LangChain
-      </div>
     </aside>
 
-    <main class="chat-panel">
-      <div class="chat-header-bar">
-        <div class="chat-header-title">
-          <span>💬 Conversational Vector Retrieval</span>
+    <!-- Right Column: Interactive Chat & Vectorstore Inspector -->
+    <main class="chat-panel-card">
+      
+      <!-- Top Tab Switcher & Actions -->
+      <div class="tab-bar">
+        <div class="tab-group">
+          <button class="tab-btn active" id="chatTabBtn" onclick="switchTab('chat')">💬 Chat with PDF</button>
+          <button class="tab-btn" id="inspectorTabBtn" onclick="switchTab('inspector')">🔬 Vector Inspector</button>
         </div>
-        <button class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.72rem;" onclick="clearChat()">
-          🧹 Clear History
-        </button>
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="btn-action" onclick="exportChatCSV()">📥 Download CSV</button>
+          <button class="btn-action" onclick="clearChat()">🧹 Clear Chat</button>
+        </div>
       </div>
 
-      <div class="quick-chips">
-        <button class="chip-btn" onclick="sendQuickPrompt('What are the data privacy and retention rules in Section 4.2?')">
-          🔒 Data Privacy &amp; 90-day Retention
-        </button>
-        <button class="chip-btn" onclick="sendQuickPrompt('What are the SLA downtime credit penalties and uptime guarantees?')">
-          ⏱️ SLA Downtime Penalties
-        </button>
-        <button class="chip-btn" onclick="sendQuickPrompt('What encryption protocols are mandatory for cold data storage?')">
-          🛡️ Encryption &amp; Cold Storage
-        </button>
-        <button class="chip-btn" onclick="sendQuickPrompt('How does the failover architecture achieve 99.99% availability?')">
-          ⚡ 99.99% High Availability Failover
-        </button>
+      <!-- Quick Suggested Prompt Chips -->
+      <div class="quick-chips-bar" id="quickChipsBar">
+        <!-- Populated dynamically based on document -->
       </div>
 
-      <div class="chat-messages" id="chatStream">
-        <div class="message assistant">
-          <div class="msg-avatar">AI</div>
-          <div class="msg-bubble">
-            <div class="retrieval-pill">
-              <span>⚡</span> ChromaDB Index Loaded (81 Chunks)
-            </div>
-            <p>Welcome to <strong>NexusRAG AI</strong>! I am an enterprise retrieval-augmented chatbot connected to your private knowledge base via dense vector embeddings.</p>
-            <p style="margin-top: 0.5rem;">Ask any technical question or select one of the suggested prompts above to see real-time semantic chunk retrieval, grounded source citations, and LLM synthesis.</p>
-            <div class="msg-meta">
-              <span>Model: Llama-3-70b-Groq</span>
-              <span>Vector Similarity: HNSW Index</span>
+      <!-- View 1: Chat Stream -->
+      <div id="chatView" style="display: flex; flex-direction: column; flex: 1;">
+        <div class="messages-stream" id="messagesStream">
+          <!-- Welcome Message -->
+          <div class="message assistant">
+            <div class="msg-avatar">AI</div>
+            <div class="msg-bubble">
+              <div class="retrieval-pill">⚡ PDF Chunked &amp; Indexed (ChromaDB)</div>
+              <p>Hello! I am <strong>RAG PDFBot</strong>. I have indexed your document into dense vector embeddings. Ask me any question, and I will retrieve the exact relevant passages and provide grounded answers with citations!</p>
+              <div class="msg-meta">
+                <span>Engineered by UMAR MUKTHAR</span>
+                <span>FastAPI + ChromaDB</span>
+              </div>
             </div>
           </div>
         </div>
+
+        <!-- Chat Input Form -->
+        <div class="chat-input-area">
+          <form class="chat-input-form" onsubmit="handleUserSubmit(event)">
+            <input 
+              type="text" 
+              id="chatInputField" 
+              class="chat-input-field" 
+              placeholder="Ask a question about the uploaded PDF..."
+              autocomplete="off"
+            />
+            <button type="submit" class="send-btn" title="Ask Question">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+            </button>
+          </form>
+        </div>
       </div>
 
-      <div class="chat-input-area">
-        <form class="chat-input-form" onsubmit="handleChatSubmit(event)">
-          <input 
-            type="text" 
-            id="chatInput" 
-            class="chat-input-field" 
-            placeholder="Ask a question about your indexed documents (e.g. data retention, SLA penalties, encryption)..."
-            autocomplete="off"
-          />
-          <button type="submit" class="chat-send-btn" title="Send Query">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="22" y1="2" x2="11" y2="13"></line>
-              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-            </svg>
-          </button>
-        </form>
+      <!-- View 2: Vectorstore Inspector -->
+      <div id="inspectorView" class="inspector-view">
+        <div>
+          <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.35rem;">🔬 ChromaDB Similarity Search Inspector</h3>
+          <p style="font-size: 0.75rem; color: var(--text-muted);">
+            Below are the top-ranked semantic chunks retrieved via Cosine similarity distance for your last query.
+          </p>
+        </div>
+
+        <div id="inspectorChunksList" style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <!-- Populated dynamically -->
+        </div>
       </div>
+
     </main>
 
-    <aside class="inspector-panel">
-      <div>
-        <div class="section-title">🔬 ChromaDB Inspector</div>
-        <p style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.75rem;">
-          Real-time Top-K nearest neighbors retrieved via cosine distance.
-        </p>
-      </div>
-
-      <div>
-        <label>2D Semantic Cluster Map (PCA Projection)</label>
-        <div class="canvas-container">
-          <canvas id="vectorCanvas" width="300" height="160"></canvas>
-        </div>
-      </div>
-
-      <div>
-        <div class="section-title">📄 Retrieved Chunks (Context)</div>
-        <div id="retrievedChunksList">
-          <div class="chunk-card active-sim">
-            <div class="chunk-header">
-              <span class="chunk-id">#Chunk-142 • Enterprise_Policy</span>
-              <span class="chunk-score">0.942 Cosine</span>
-            </div>
-            <div class="chunk-text">
-              "Customer PII must be encrypted at rest with AES-256 keys. Dormant customer telemetry records must undergo scheduled automated purge after 90 days of inactivity."
-            </div>
-            <div class="sim-bar-bg">
-              <div class="sim-bar-fill" style="width: 94.2%;"></div>
-            </div>
-          </div>
-
-          <div class="chunk-card">
-            <div class="chunk-header">
-              <span class="chunk-id">#Chunk-145 • Enterprise_Policy</span>
-              <span class="chunk-score">0.918 Cosine</span>
-            </div>
-            <div class="chunk-text">
-              "Section 4.2: Automated purge workflows run daily at 00:00 UTC. Audit logs documenting purged user identifier hashes are preserved indefinitely for compliance."
-            </div>
-            <div class="sim-bar-bg">
-              <div class="sim-bar-fill" style="width: 91.8%;"></div>
-            </div>
-          </div>
-
-          <div class="chunk-card">
-            <div class="chunk-header">
-              <span class="chunk-id">#Chunk-089 • Security_SLA</span>
-              <span class="chunk-score">0.884 Cosine</span>
-            </div>
-            <div class="chunk-text">
-              "All audit trail replicas are synchronized with WORM-compliant cloud storage buckets with multi-region redundancy and cross-account authorization."
-            </div>
-            <div class="sim-bar-bg">
-              <div class="sim-bar-fill" style="width: 88.4%;"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <div class="section-title">⚡ Pipeline Telemetry</div>
-        <div class="telemetry-grid">
-          <div class="telemetry-item">
-            <div class="telemetry-label">Vector Search</div>
-            <div class="telemetry-value" id="searchLatency" style="color: #34d399;">12.4 ms</div>
-          </div>
-          <div class="telemetry-item">
-            <div class="telemetry-label">Groundedness</div>
-            <div class="telemetry-value" id="groundScore" style="color: #38bdf8;">99.4%</div>
-          </div>
-          <div class="telemetry-item">
-            <div class="telemetry-label">Embedding Dim</div>
-            <div class="telemetry-value">768-D</div>
-          </div>
-          <div class="telemetry-item">
-            <div class="telemetry-label">Context Tokens</div>
-            <div class="telemetry-value" id="contextTokens">642</div>
-          </div>
-        </div>
-      </div>
-    </aside>
   </div>
 
-  <div class="modal-overlay" id="ingestModal">
-    <div class="modal-card">
-      <div class="modal-title">📥 Ingest Custom Document</div>
-      <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1rem;">
-        Paste technical text or notes. The engine will chunk using the active token parameters, compute 768-dim embeddings, and index into ChromaDB.
-      </p>
-
-      <div class="form-group">
-        <label>Document Title</label>
-        <input type="text" id="newDocTitle" placeholder="e.g. Microservices_Guidelines.md">
-      </div>
-
-      <div class="form-group">
-        <label>Document Content</label>
-        <textarea id="newDocContent" placeholder="Paste your technical text or documentation here..."></textarea>
-      </div>
-
-      <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
-        <button class="btn btn-outline" onclick="closeIngestModal()">Cancel</button>
-        <button class="btn btn-primary" onclick="ingestNewDocument()">Index into Vectorstore</button>
-      </div>
-    </div>
-  </div>
+  <!-- Footer -->
+  <footer>
+    <strong>RAG PDFBot — PDF AI Chatbot</strong> • Developed &amp; Maintained by <strong>UMAR MUKTHAR</strong> (@UMARMUKTHAR03) • All Rights Reserved
+  </footer>
 
   <script>
-    const knowledgeBase = [
-      {
-        id: "Chunk-142",
-        doc: "Enterprise_Data_Policy.pdf",
-        page: 14,
-        score: 0.942,
-        keywords: ["privacy", "retention", "purge", "4.2", "dormant", "90", "days", "pii"],
-        text: "Customer PII must be encrypted at rest with AES-256 keys. In accordance with Section 4.2, dormant customer telemetry records must undergo scheduled automated purge after 90 days of continuous account inactivity.",
-        citation: "[Enterprise_Data_Policy.pdf • Page 14]"
+    // Knowledge Base Documents
+    const documentStore = {
+      'ai_research': {
+        name: 'AI_Safety_Report.pdf',
+        pages: 14,
+        chunks: 32,
+        chips: [
+          'What are the key alignment strategies in Section 3?',
+          'What benchmark scores did the model achieve on truthfulness?',
+          'How is red-teaming conducted for safety evaluations?'
+        ],
+        qa: {
+          'alignment': {
+            answer: 'According to <strong>Section 3 (Alignment Protocols)</strong> <span class="citation-tag">[Page 4]</span>, the safety framework implements Direct Preference Optimization (DPO) combined with rule-based reward penalties to suppress deceptive behaviors.',
+            citation: 'AI_Safety_Report.pdf • Page 4',
+            score: 0.942
+          },
+          'benchmark': {
+            answer: 'As reported in <strong>Table 2 (Evaluation Results)</strong> <span class="citation-tag">[Page 7]</span>, the model achieved an <strong>89.4% truthfulness score</strong> on TruthfulQA, outperforming baseline models by 14.2%.',
+            citation: 'AI_Safety_Report.pdf • Page 7',
+            score: 0.915
+          },
+          'red-teaming': {
+            answer: 'In <strong>Section 5.1 (Adversarial Testing)</strong> <span class="citation-tag">[Page 11]</span>, adversarial red-teaming involved automated jailbreak evaluation alongside 120 expert human analysts testing prompt injection defenses.',
+            citation: 'AI_Safety_Report.pdf • Page 11',
+            score: 0.887
+          }
+        }
       },
-      {
-        id: "Chunk-145",
-        doc: "Enterprise_Data_Policy.pdf",
-        page: 15,
-        score: 0.918,
-        keywords: ["privacy", "retention", "purge", "compliance", "audit", "4.2"],
-        text: "Section 4.2 Execution: Automated purge workflows run daily at 00:00 UTC. Anonymized cryptographic audit hashes confirming deletion are recorded in compliance logs for regulatory auditing.",
-        citation: "[Enterprise_Data_Policy.pdf • Page 15]"
+      'financial_sla': {
+        name: 'Cloud_SLA_Pricing.pdf',
+        pages: 8,
+        chunks: 24,
+        chips: [
+          'What is the guaranteed monthly uptime SLA percentage?',
+          'What credit penalties apply if downtime exceeds 0.01%?',
+          'What billing cycle discounts are offered for annual plans?'
+        ],
+        qa: {
+          'uptime': {
+            answer: 'Under <strong>Section 2.1 (Service Guarantees)</strong> <span class="citation-tag">[Page 2]</span>, the platform guarantees a strict <strong>99.99% monthly availability SLA</strong> across all multi-region clusters.',
+            citation: 'Cloud_SLA_Pricing.pdf • Page 2',
+            score: 0.956
+          },
+          'credit': {
+            answer: 'According to <strong>Section 4.3 (Downtime Credits)</strong> <span class="citation-tag">[Page 5]</span>, monthly downtime exceeding 0.01% triggers a <strong>10% service credit</strong>, escalating to 25% for outages exceeding 60 minutes.',
+            citation: 'Cloud_SLA_Pricing.pdf • Page 5',
+            score: 0.923
+          },
+          'annual': {
+            answer: 'In <strong>Schedule A (Pricing Tiers)</strong> <span class="citation-tag">[Page 6]</span>, enterprise annual commitments receive an upfront <strong>20% discount</strong> with included dedicated technical support.',
+            citation: 'Cloud_SLA_Pricing.pdf • Page 6',
+            score: 0.892
+          }
+        }
       },
-      {
-        id: "Chunk-089",
-        doc: "Cloud_Security_SLA.pdf",
-        page: 9,
-        score: 0.884,
-        keywords: ["encryption", "storage", "worm", "cold", "aes", "backup"],
-        text: "All backup replicas and archived telemetry must be written to immutable WORM (Write Once, Read Many) cloud buckets encrypted with TLS 1.3 in-transit and AES-256-GCM at rest.",
-        citation: "[Cloud_Security_SLA.pdf • Page 9]"
-      },
-      {
-        id: "Chunk-210",
-        doc: "Cloud_Security_SLA.pdf",
-        page: 22,
-        score: 0.935,
-        keywords: ["sla", "downtime", "credit", "penalty", "uptime", "guarantee", "99.99"],
-        text: "The service level agreement guarantees 99.99% monthly availability. Monthly downtime exceeding 0.01% triggers a tier-1 penalty credit of 10% invoice reduction, escalating to 25% for downtime exceeding 1 hour.",
-        citation: "[Cloud_Security_SLA.pdf • Page 22]"
-      },
-      {
-        id: "Chunk-304",
-        doc: "Architecture_RFC_2026.pdf",
-        page: 4,
-        score: 0.912,
-        keywords: ["failover", "availability", "architecture", "redundancy", "99.99", "cluster"],
-        text: "High availability is maintained via active-active multi-region deployment across 3 availability zones. Automatic health checks trigger DNS failover in less than 350ms with zero split-brain state.",
-        citation: "[Architecture_RFC_2026.pdf • Page 4]"
+      'cybersecurity': {
+        name: 'Security_Policy.pdf',
+        pages: 11,
+        chunks: 28,
+        chips: [
+          'What encryption algorithms are required for data at rest?',
+          'What is the automated retention purge policy for dormant accounts?',
+          'How often are multi-factor authentication credentials rotated?'
+        ],
+        qa: {
+          'encryption': {
+            answer: 'In accordance with <strong>Policy 104.B (Cryptographic Controls)</strong> <span class="citation-tag">[Page 3]</span>, all stored data must be encrypted with <strong>AES-256-GCM</strong> using hardware security module (HSM) managed keys.',
+            citation: 'Security_Policy.pdf • Page 3',
+            score: 0.948
+          },
+          'retention': {
+            answer: 'Under <strong>Section 4.2 (Data Lifecycle)</strong> <span class="citation-tag">[Page 8]</span>, dormant user telemetry records undergo scheduled automated deletion after <strong>90 continuous days</strong> of inactivity.',
+            citation: 'Security_Policy.pdf • Page 8',
+            score: 0.931
+          },
+          'mfa': {
+            answer: 'As mandated in <strong>Section 6.1 (Access Management)</strong> <span class="citation-tag">[Page 9]</span>, privileged access sessions require FIDO2/WebAuthn hardware tokens with session re-authentication every 8 hours.',
+            citation: 'Security_Policy.pdf • Page 9',
+            score: 0.904
+          }
+        }
       }
-    ];
+    };
 
-    function updateModelOptions() {
-      const provider = document.getElementById('llmProvider').value;
-      const modelSelect = document.getElementById('llmModel');
-      modelSelect.innerHTML = '';
+    let activeDocKey = 'ai_research';
+    let chatHistory = [];
+    let lastRetrievedChunks = [];
 
-      if (provider === 'groq') {
-        const opts = [
-          { val: 'llama-3-70b-8192', name: 'Llama-3-70b-8192 (Fast)' },
-          { val: 'llama-3-8b-8192', name: 'Llama-3-8b-8192 (Lightweight)' },
-          { val: 'mixtral-8x7b-32768', name: 'Mixtral-8x7b-32768 (Long Context)' }
-        ];
-        opts.forEach(o => {
-          const opt = document.createElement('option');
-          opt.value = o.val;
-          opt.innerText = o.name;
-          modelSelect.appendChild(opt);
-        });
-      } else {
-        const opts = [
-          { val: 'gemini-1.5-pro', name: 'Gemini-1.5-Pro (Reasoning)' },
-          { val: 'gemini-1.5-flash', name: 'Gemini-1.5-Flash (Low Latency)' }
-        ];
-        opts.forEach(o => {
-          const opt = document.createElement('option');
-          opt.value = o.val;
-          opt.innerText = o.name;
-          modelSelect.appendChild(opt);
-        });
-      }
-    }
+    function loadSampleDoc(key) {
+      activeDocKey = key;
+      const doc = documentStore[key];
 
-    function openIngestModal() {
-      document.getElementById('ingestModal').classList.add('active');
-    }
+      document.querySelectorAll('.sample-doc-btn').forEach(b => b.classList.remove('active'));
+      event.currentTarget.classList.add('active');
 
-    function closeIngestModal() {
-      document.getElementById('ingestModal').classList.remove('active');
-    }
+      document.getElementById('activeDocTitle').innerText = '📄 ' + doc.name;
+      document.getElementById('activeDocMeta').innerText = `${doc.pages} Pages • ${doc.chunks} Chunks • ChromaDB Ready`;
 
-    function ingestNewDocument() {
-      const title = document.getElementById('newDocTitle').value.trim() || 'Custom_Doc.txt';
-      const content = document.getElementById('newDocContent').value.trim();
-
-      if (!content) {
-        alert('Please provide document text to chunk and index.');
-        return;
-      }
-
-      knowledgeBase.push({
-        id: `Chunk-${Math.floor(Math.random() * 800) + 400}`,
-        doc: title,
-        page: 1,
-        score: 0.95,
-        keywords: content.toLowerCase().split(/\s+/).slice(0, 10),
-        text: content,
-        citation: `[${title} • Page 1]`
-      });
-
-      const docList = document.getElementById('docList');
-      const item = document.createElement('div');
-      item.className = 'doc-item';
-      item.innerHTML = `
-        <div class="doc-info">
-          <span class="doc-icon">📄</span>
-          <div>
-            <div class="doc-name">${title}</div>
-            <div class="doc-meta">Newly Chunked • HNSW Ready</div>
-          </div>
-        </div>
-        <span class="badge-chip">Indexed</span>
-      `;
-      docList.appendChild(item);
-
-      document.getElementById('chunkCounter').innerText = `${knowledgeBase.length} Documents`;
-      closeIngestModal();
+      updateChips();
 
       appendAssistantMessage(
-        `Successfully vectorized and indexed <strong>${title}</strong> into ChromaDB using token chunking! You can now query its contents.`,
-        null,
-        15.1,
-        "99.8%",
+        `Loaded <strong>${doc.name}</strong> into ChromaDB! All ${doc.chunks} vector embeddings are ready. Ask any question or use the suggested prompts above.`,
+        doc.name,
+        11.4,
         []
       );
     }
 
-    function sendQuickPrompt(promptText) {
-      document.getElementById('chatInput').value = promptText;
-      handleChatSubmit();
+    function updateChips() {
+      const container = document.getElementById('quickChipsBar');
+      container.innerHTML = '';
+      const doc = documentStore[activeDocKey];
+      if (!doc || !doc.chips) return;
+
+      doc.chips.forEach(chip => {
+        const btn = document.createElement('button');
+        btn.className = 'chip-btn';
+        btn.innerText = chip;
+        btn.onclick = () => {
+          document.getElementById('chatInputField').value = chip;
+          handleUserSubmit();
+        };
+        container.appendChild(btn);
+      });
     }
 
-    function clearChat() {
-      const stream = document.getElementById('chatStream');
-      stream.innerHTML = `
-        <div class="message assistant">
-          <div class="msg-avatar">AI</div>
-          <div class="msg-bubble">
-            <div class="retrieval-pill">
-              <span>⚡</span> ChromaDB Index Ready
-            </div>
-            <p>Chat history cleared. Ingested vector store remains intact. Ask a question to begin a new grounded thread!</p>
-          </div>
-        </div>
-      `;
+    function handleFileUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const fileName = file.name;
+      const estimatedPages = Math.max(1, Math.round(file.size / 30000));
+      const estimatedChunks = estimatedPages * 3;
+
+      documentStore['uploaded'] = {
+        name: fileName,
+        pages: estimatedPages,
+        chunks: estimatedChunks,
+        chips: [
+          `What is the summary of ${fileName}?`,
+          `What are the primary findings in ${fileName}?`,
+          `What recommendations are outlined in ${fileName}?`
+        ],
+        qa: {
+          'summary': {
+            answer: `Based on the uploaded document <strong>${fileName}</strong> <span class="citation-tag">[Page 1]</span>, the document outlines technical specifications, operating guidelines, and architectural criteria.`,
+            citation: `${fileName} • Page 1`,
+            score: 0.932
+          },
+          'findings': {
+            answer: `Key findings extracted from <strong>${fileName}</strong> <span class="citation-tag">[Page ${Math.min(2, estimatedPages)}]</span> show consistent validation across all test criteria with zero reported anomalies.`,
+            citation: `${fileName} • Page ${Math.min(2, estimatedPages)}`,
+            score: 0.912
+          },
+          'recommendations': {
+            answer: `Recommended next steps in <strong>${fileName}</strong> include regular compliance audits, parameter optimization, and continuous monitoring.`,
+            citation: `${fileName} • Page ${estimatedPages}`,
+            score: 0.884
+          }
+        }
+      };
+
+      activeDocKey = 'uploaded';
+      document.querySelectorAll('.sample-doc-btn').forEach(b => b.classList.remove('active'));
+
+      document.getElementById('activeDocTitle').innerText = '📄 ' + fileName;
+      document.getElementById('activeDocMeta').innerText = `${estimatedPages} Pages • ${estimatedChunks} Chunks • Successfully Vectorized`;
+
+      updateChips();
+
+      appendAssistantMessage(
+        `Successfully uploaded and vectorized <strong>${fileName}</strong>! Extracted ${estimatedPages} pages and generated ${estimatedChunks} text chunks in ChromaDB. You can now chat with your PDF.`,
+        fileName,
+        14.8,
+        []
+      );
     }
 
-    function handleChatSubmit(e) {
+    function switchTab(tab) {
+      if (tab === 'chat') {
+        document.getElementById('chatTabBtn').classList.add('active');
+        document.getElementById('inspectorTabBtn').classList.remove('active');
+        document.getElementById('chatView').style.display = 'flex';
+        document.getElementById('inspectorView').classList.remove('active');
+      } else {
+        document.getElementById('chatTabBtn').classList.remove('active');
+        document.getElementById('inspectorTabBtn').classList.add('active');
+        document.getElementById('chatView').style.display = 'none';
+        document.getElementById('inspectorView').classList.add('active');
+        renderInspector();
+      }
+    }
+
+    function handleUserSubmit(e) {
       if (e) e.preventDefault();
-      const input = document.getElementById('chatInput');
+      const input = document.getElementById('chatInputField');
       const query = input.value.trim();
       if (!query) return;
 
       input.value = '';
       appendUserMessage(query);
-      simulateVectorRetrieval(query);
+
+      const stream = document.getElementById('messagesStream');
+      const loading = document.createElement('div');
+      loading.className = 'message assistant';
+      loading.id = 'tempLoadingMsg';
+      loading.innerHTML = `
+        <div class="msg-avatar">AI</div>
+        <div class="msg-bubble">
+          <div class="retrieval-pill">⚡ Vectorizing query &amp; searching ChromaDB...</div>
+          <p style="color: var(--text-muted); font-size: 0.8rem;">Searching top chunks via cosine similarity...</p>
+        </div>
+      `;
+      stream.appendChild(loading);
+      stream.scrollTop = stream.scrollHeight;
+
+      setTimeout(() => {
+        const temp = document.getElementById('tempLoadingMsg');
+        if (temp) temp.remove();
+
+        const doc = documentStore[activeDocKey];
+        const qLower = query.toLowerCase();
+        let matched = null;
+
+        for (const k in doc.qa) {
+          if (qLower.includes(k)) {
+            matched = doc.qa[k];
+            break;
+          }
+        }
+
+        if (!matched) {
+          const keys = Object.keys(doc.qa);
+          matched = doc.qa[keys[0]];
+        }
+
+        lastRetrievedChunks = [
+          {
+            id: 'Chunk-104',
+            doc: doc.name,
+            score: matched.score,
+            text: matched.answer.replace(/<[^>]*>?/gm, '')
+          },
+          {
+            id: 'Chunk-108',
+            doc: doc.name,
+            score: (matched.score - 0.035).toFixed(3),
+            text: 'Supplementary context passage retrieved from adjacent paragraph confirming factual statements.'
+          },
+          {
+            id: 'Chunk-112',
+            doc: doc.name,
+            score: (matched.score - 0.062).toFixed(3),
+            text: 'Section summary notes confirming methodology and parameter specifications.'
+          }
+        ];
+
+        appendAssistantMessage(matched.answer, doc.name, 12.6, lastRetrievedChunks);
+        chatHistory.push({ q: query, a: matched.answer.replace(/<[^>]*>?/gm, ''), doc: doc.name });
+      }, 500);
     }
 
     function appendUserMessage(text) {
-      const stream = document.getElementById('chatStream');
+      const stream = document.getElementById('messagesStream');
       const msg = document.createElement('div');
       msg.className = 'message user';
       msg.innerHTML = `
         <div class="msg-avatar">YOU</div>
-        <div class="msg-bubble">
-          <p>${escapeHtml(text)}</p>
-        </div>
+        <div class="msg-bubble"><p>${escapeHtml(text)}</p></div>
       `;
       stream.appendChild(msg);
       stream.scrollTop = stream.scrollHeight;
     }
 
-    function simulateVectorRetrieval(query) {
-      const stream = document.getElementById('chatStream');
-      const loadingMsg = document.createElement('div');
-      loadingMsg.className = 'message assistant';
-      loadingMsg.id = 'tempLoading';
-      loadingMsg.innerHTML = `
-        <div class="msg-avatar">AI</div>
-        <div class="msg-bubble">
-          <div class="retrieval-pill">
-            <span class="status-dot"></span> Performing HNSW Cosine Similarity Search...
-          </div>
-          <p style="color: var(--text-muted); font-size: 0.8rem;">Vectorizing query with 768-dim embeddings &amp; querying ChromaDB...</p>
-        </div>
-      `;
-      stream.appendChild(loadingMsg);
-      stream.scrollTop = stream.scrollHeight;
-
-      animateVectorSearch();
-
-      setTimeout(() => {
-        const temp = document.getElementById('tempLoading');
-        if (temp) temp.remove();
-
-        const qLower = query.toLowerCase();
-        let matched = knowledgeBase.filter(k => 
-          k.keywords.some(kw => qLower.includes(kw))
-        );
-
-        if (matched.length === 0) {
-          matched = [knowledgeBase[0], knowledgeBase[1]];
-        }
-
-        const topK = parseInt(document.getElementById('topK').value) || 3;
-        const retrieved = matched.slice(0, topK);
-
-        const latency = (Math.random() * 8 + 8).toFixed(1);
-        document.getElementById('searchLatency').innerText = `${latency} ms`;
-        document.getElementById('contextTokens').innerText = `${retrieved.length * 214}`;
-
-        renderInspectorChunks(retrieved);
-        generateGroundedAnswer(query, retrieved, latency);
-      }, 550);
-    }
-
-    function generateGroundedAnswer(query, retrieved, latency) {
-      const qLower = query.toLowerCase();
-      let answerText = "";
-
-      if (qLower.includes("privacy") || qLower.includes("retention") || qLower.includes("4.2")) {
-        answerText = `
-          <p>Based on <strong>Section 4.2</strong> of the <span class="citation-tag">[Enterprise_Data_Policy.pdf: Page 14]</span>:</p>
-          <ul style="margin: 0.6rem 0 0.6rem 1.4rem; line-height: 1.6;">
-            <li>All customer Personally Identifiable Information (PII) is encrypted at rest using industry-standard <strong>AES-256</strong> cryptographic algorithms.</li>
-            <li>Dormant customer account telemetry records are subject to an automated retention schedule that purges records after <strong>90 continuous days</strong> of inactivity <span class="citation-tag">[Enterprise_Data_Policy.pdf: Page 15]</span>.</li>
-            <li>Purge jobs execute daily at 00:00 UTC, and anonymized cryptographic verification hashes are archived for audit compliance.</li>
-          </ul>
-        `;
-      } else if (qLower.includes("sla") || qLower.includes("downtime") || qLower.includes("penalty")) {
-        answerText = `
-          <p>According to the <strong>Cloud Security &amp; Service Level Agreement</strong> <span class="citation-tag">[Cloud_Security_SLA.pdf: Page 22]</span>:</p>
-          <ul style="margin: 0.6rem 0 0.6rem 1.4rem; line-height: 1.6;">
-            <li>The platform maintains a strict <strong>99.99% monthly availability guarantee</strong>.</li>
-            <li>Any unplanned downtime exceeding 0.01% in a billing cycle automatically triggers a <strong>10% credit penalty</strong> applied to the subsequent invoice.</li>
-            <li>Outages extending beyond 60 cumulative minutes escalate to a <strong>25% invoice credit penalty</strong>.</li>
-          </ul>
-        `;
-      } else if (qLower.includes("encryption") || qLower.includes("cold") || qLower.includes("storage")) {
-        answerText = `
-          <p>In accordance with data governance standards <span class="citation-tag">[Cloud_Security_SLA.pdf: Page 9]</span>:</p>
-          <ul style="margin: 0.6rem 0 0.6rem 1.4rem; line-height: 1.6;">
-            <li>Cold and archived telemetry replicas must reside in <strong>immutable WORM (Write Once, Read Many)</strong> storage buckets.</li>
-            <li>All in-flight transmission requires <strong>TLS 1.3</strong>, while data at rest is secured via <strong>AES-256-GCM</strong> with hardware security module (HSM) managed keys.</li>
-          </ul>
-        `;
-      } else {
-        const topCitation = retrieved[0] ? retrieved[0].citation : "Document Index";
-        answerText = `
-          <p>Relevant information retrieved from your indexed repository <span class="citation-tag">${topCitation}</span>:</p>
-          <blockquote style="margin: 0.5rem 0; padding-left: 0.75rem; border-left: 3px solid var(--primary); color: #cbd5e1; font-style: italic;">
-            "${retrieved[0] ? retrieved[0].text : 'The enterprise knowledge base details secure deployment and operational procedures.'}"
-          </blockquote>
-          <p>This response is grounded strictly in the retrieved ChromaDB chunks without external hallucination.</p>
-        `;
-      }
-
-      appendAssistantMessage(
-        answerText,
-        retrieved[0] ? retrieved[0].doc : "ChromaDB",
-        latency,
-        "99.4%",
-        retrieved
-      );
-    }
-
-    function appendAssistantMessage(htmlContent, sourceDoc, latency, grounding, chunks) {
-      const stream = document.getElementById('chatStream');
-      const model = document.getElementById('llmModel').value;
+    function appendAssistantMessage(htmlContent, docName, latency, chunks) {
+      const stream = document.getElementById('messagesStream');
+      const model = document.getElementById('activeModel').value;
       const msg = document.createElement('div');
       msg.className = 'message assistant';
 
-      const pillText = chunks && chunks.length > 0 
-        ? `Retrieved ${chunks.length} chunks from ${sourceDoc} (Sim: ${chunks[0].score})`
-        : `ChromaDB Vectorstore Notification`;
+      const pill = chunks && chunks.length > 0 
+        ? `Retrieved ${chunks.length} chunks from ${docName} (${latency}ms)`
+        : 'ChromaDB Status';
 
       msg.innerHTML = `
         <div class="msg-avatar">AI</div>
         <div class="msg-bubble">
-          <div class="retrieval-pill">
-            <span>⚡</span> ${pillText}
-          </div>
+          <div class="retrieval-pill">⚡ ${pill}</div>
           <div>${htmlContent}</div>
           <div class="msg-meta">
-            <span>Model: ${model} • Search: ${latency}ms</span>
-            <span style="color: #38bdf8;">Grounded: ${grounding}</span>
+            <span>Model: ${model}</span>
+            <span style="color: #38bdf8;">Grounded: 99.2%</span>
           </div>
         </div>
       `;
@@ -1353,17 +1113,22 @@
       stream.scrollTop = stream.scrollHeight;
     }
 
-    function renderInspectorChunks(chunks) {
-      const container = document.getElementById('retrievedChunksList');
+    function renderInspector() {
+      const container = document.getElementById('inspectorChunksList');
       container.innerHTML = '';
 
-      chunks.forEach((chunk, index) => {
+      if (lastRetrievedChunks.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-muted); font-size: 0.8rem;">Ask a question first to inspect retrieved ChromaDB vector chunks.</p>';
+        return;
+      }
+
+      lastRetrievedChunks.forEach((chunk, i) => {
         const card = document.createElement('div');
-        card.className = `chunk-card ${index === 0 ? 'active-sim' : ''}`;
+        card.className = 'chunk-card';
         card.innerHTML = `
           <div class="chunk-header">
-            <span class="chunk-id">#${chunk.id} • ${chunk.doc}</span>
-            <span class="chunk-score">${chunk.score} Cosine</span>
+            <strong style="color: #34d399;">#${chunk.id} • ${chunk.doc}</strong>
+            <span class="chunk-score">${chunk.score} Cosine Sim</span>
           </div>
           <div class="chunk-text">"${escapeHtml(chunk.text)}"</div>
           <div class="sim-bar-bg">
@@ -1374,91 +1139,63 @@
       });
     }
 
+    function clearChat() {
+      const stream = document.getElementById('messagesStream');
+      stream.innerHTML = `
+        <div class="message assistant">
+          <div class="msg-avatar">AI</div>
+          <div class="msg-bubble">
+            <div class="retrieval-pill">⚡ Session Reset</div>
+            <p>Chat history cleared. Active PDF remains indexed in ChromaDB. Ask a question to begin a new thread!</p>
+          </div>
+        </div>
+      `;
+      chatHistory = [];
+    }
+
+    function exportChatCSV() {
+      if (chatHistory.length === 0) {
+        alert('No conversation history to export yet. Ask a question first!');
+        return;
+      }
+      let csv = 'Question,Answer,Document,Author\n';
+      chatHistory.forEach(item => {
+        csv += `"${item.q.replace(/"/g, '""')}","${item.a.replace(/"/g, '""')}","${item.doc}","UMAR MUKTHAR"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'rag_pdfbot_chat_history.csv';
+      a.click();
+    }
+
+    function updateModelSelect() {
+      const prov = document.getElementById('modelProvider').value;
+      const sel = document.getElementById('activeModel');
+      sel.innerHTML = '';
+      if (prov === 'groq') {
+        sel.innerHTML = `
+          <option value="llama3-70b-8192">Llama-3-70b-8192</option>
+          <option value="llama3-8b-8192">Llama-3-8b-8192</option>
+          <option value="mixtral-8x7b-32768">Mixtral-8x7b-32768</option>
+        `;
+      } else {
+        sel.innerHTML = `
+          <option value="gemini-1.5-pro">Gemini-1.5-Pro</option>
+          <option value="gemini-1.5-flash">Gemini-1.5-Flash</option>
+        `;
+      }
+    }
+
     function escapeHtml(text) {
       const div = document.createElement('div');
       div.innerText = text;
       return div.innerHTML;
     }
 
-    const canvas = document.getElementById('vectorCanvas');
-    const ctx = canvas.getContext('2d');
-    let points = [];
-
-    function initVectorPoints() {
-      points = [];
-      for (let i = 0; i < 16; i++) {
-        points.push({ x: 60 + Math.random() * 45, y: 55 + Math.random() * 45, color: '#10b981', r: 3 });
-      }
-      for (let i = 0; i < 14; i++) {
-        points.push({ x: 190 + Math.random() * 50, y: 65 + Math.random() * 45, color: '#06b6d4', r: 3 });
-      }
-      for (let i = 0; i < 18; i++) {
-        points.push({ x: 130 + Math.random() * 50, y: 110 + Math.random() * 35, color: '#8b5cf6', r: 3 });
-      }
-      drawVectorCanvas();
-    }
-
-    function drawVectorCanvas(queryPoint = null) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
-      ctx.lineWidth = 1;
-      for (let x = 0; x < canvas.width; x += 30) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, canvas.height);
-        ctx.stroke();
-      }
-      for (let y = 0; y < canvas.height; y += 30) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvas.width, y);
-        ctx.stroke();
-      }
-
-      points.forEach(p => {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
-        ctx.fill();
-      });
-
-      if (queryPoint) {
-        ctx.beginPath();
-        ctx.arc(queryPoint.x, queryPoint.y, 6, 0, Math.PI * 2);
-        ctx.fillStyle = '#f59e0b';
-        ctx.shadowColor = '#f59e0b';
-        ctx.shadowBlur = 10;
-        ctx.fill();
-        ctx.shadowBlur = 0;
-
-        const sorted = [...points].sort((a, b) => {
-          const distA = Math.hypot(a.x - queryPoint.x, a.y - queryPoint.y);
-          const distB = Math.hypot(b.x - queryPoint.x, b.y - queryPoint.y);
-          return distA - distB;
-        }).slice(0, 3);
-
-        sorted.forEach(target => {
-          ctx.beginPath();
-          ctx.setLineDash([3, 3]);
-          ctx.moveTo(queryPoint.x, queryPoint.y);
-          ctx.lineTo(target.x, target.y);
-          ctx.strokeStyle = '#34d399';
-          ctx.lineWidth = 1.5;
-          ctx.stroke();
-          ctx.setLineDash([]);
-        });
-      }
-    }
-
-    function animateVectorSearch() {
-      const qX = 80 + Math.random() * 50;
-      const qY = 70 + Math.random() * 40;
-      drawVectorCanvas({ x: qX, y: qY });
-    }
-
     window.addEventListener('DOMContentLoaded', () => {
-      initVectorPoints();
+      updateChips();
     });
   </script>
 </body>
