@@ -1,6 +1,6 @@
-# 🧠 RAG PDFBot - Client
+# 🧠 NexusRAG AI — Client
 
-This is the Streamlit-based frontend for the RAG PDFBot. It allows users to upload PDF files, ask questions, inspect responses, and download chat history.
+This is the **Streamlit-based frontend** for NexusRAG AI. It provides users with a conversational interface to upload PDF documents, ask questions grounded in their content, inspect vectorstore responses, and export conversation history.
 
 ---
 
@@ -9,7 +9,7 @@ This is the Streamlit-based frontend for the RAG PDFBot. It allows users to uplo
 - 📄 Upload and chat with multiple PDFs
 - 🧠 Choose between LLM providers (Groq, Gemini)
 - 🔬 Inspector to test direct vectorstore queries
-- 📥 Downloadable chat history
+- 📥 Downloadable chat history (CSV)
 
 ---
 
@@ -37,8 +37,8 @@ client/
 1. **Clone the repo**
 
 ```bash
-git clone https://github.com/Zlash65/rag-bot-fastapi.git
-cd rag-bot-fastapi
+git clone https://github.com/UMARMUKTHAR03/rag-ai-chatbot.git
+cd rag-ai-chatbot
 ```
 
 2. **Create a virtual environment (optional)**
@@ -52,7 +52,6 @@ source venv/bin/activate
 
 ```bash
 cd client
-
 pip3 install -r requirements.txt
 ```
 
@@ -63,8 +62,7 @@ pip3 install -r requirements.txt
 Run the app:
 
 ```bash
-cd rag-bot-fastapi/client
-
+cd rag-ai-chatbot/client
 streamlit run app.py
 ```
 
@@ -100,8 +98,8 @@ API_URL = "http://127.0.0.1:8000"
 Chat history is saved in the session state and can be exported as a CSV with the following columns:
 
 | Question | Answer | Model Provider | Model Name | PDF File | Timestamp |
-|----------|--------|----------------|------------|---------------------|-----------|
-| What is this PDF about? | This PDF explains... | Groq | llama3-70b-8192 | file1.pdf, file2.pdf | 2025-07-03 21:00:00 |
+|----------|--------|----------------|------------|----------|-----------|
+| What is this PDF about? | This PDF explains... | Groq | llama3-70b-8192 | file1.pdf | 2026-10-27 |
 
 ---
 
@@ -109,3 +107,7 @@ Chat history is saved in the session state and can be exported as a CSV with the
 
 - Ensure the backend (FastAPI) server is running before launching the client.
 - Chat and Inspector require PDFs to be uploaded and processed first.
+
+---
+
+**Engineered by UMAR MUKTHAR** • [@UMARMUKTHAR03](https://github.com/UMARMUKTHAR03)
