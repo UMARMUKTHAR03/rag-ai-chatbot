@@ -18,9 +18,13 @@ from components.inspector import render_inspect_query
 
 
 def main():
-  st.set_page_config(page_title="RAG PDFBot", layout="centered")
-  st.title("👽 RAG PDFBot")
-  st.caption("Chat with multiple PDFs :books:")
+  st.set_page_config(
+    page_title="NexusRAG AI — Enterprise Knowledge Intelligence",
+    page_icon="🧠",
+    layout="wide"
+  )
+  st.title("🧠 NexusRAG AI")
+  st.caption("Enterprise Retrieval-Augmented Generation & Vector Intelligence • Engineered by UMAR MUKTHAR")
 
   setup_session_state()
 
