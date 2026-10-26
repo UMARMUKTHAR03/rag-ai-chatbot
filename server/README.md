@@ -1,15 +1,15 @@
-# 🤖 RAG PDFBot - Server
+# 🤖 NexusRAG AI — Server
 
-This is the FastAPI backend for the RAG PDFBot. It handles PDF processing, vectorstore embedding, LLM chain execution, and API endpoints.
+This is the **FastAPI backend** for NexusRAG AI. It handles PDF processing, vectorstore embedding via ChromaDB, LLM chain execution through LangChain, and exposes RESTful API endpoints for the Streamlit frontend.
 
 ---
 
 ## Features
 
-- ✅ Upload and process PDFs
-- 🧠 Chat with LLM using vectorstore retrieval
+- ✅ Upload and process PDFs (token-based chunking)
+- 🧠 Chat with LLM using vectorstore retrieval (RAG)
 - 🔍 Inspect document chunks via similarity search
-- 🌐 Supports multiple providers (Groq, Gemini)
+- 🌐 Supports multiple providers (Groq, Google Gemini)
 
 ---
 
@@ -31,8 +31,8 @@ server/
 1. **Clone the repo**
 
 ```bash
-git clone https://github.com/Zlash65/rag-bot-fastapi.git
-cd rag-bot-fastapi
+git clone https://github.com/UMARMUKTHAR03/rag-ai-chatbot.git
+cd rag-ai-chatbot
 ```
 
 2. **Create a virtual environment (optional)**
@@ -46,7 +46,6 @@ source venv/bin/activate
 
 ```bash
 cd server
-
 pip3 install -r requirements.txt
 ```
 
@@ -71,8 +70,7 @@ GOOGLE_API_KEY = "your_google_key"
 Run the app:
 
 ```bash
-cd rag-bot-fastapi/server
-
+cd rag-ai-chatbot/server
 uvicorn main:app --reload
 ```
 
@@ -80,14 +78,22 @@ uvicorn main:app --reload
 
 ## API Endpoints
 
-- `/upload_and_process_pdfs`
-- `/chat`
-- `/vector_store/count/{provider}`
-- `/vector_store/search`
-- `/llm`
-- `/llm/{provider}`
-- `/health`
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/upload_and_process_pdfs` | POST | Upload & vectorize PDF documents |
+| `/chat` | POST | Send query, receive RAG-grounded response |
+| `/vector_store/count/{provider}` | GET | Get indexed chunk count |
+| `/vector_store/search` | POST | Direct similarity search |
+| `/llm` | GET | List available providers |
+| `/llm/{provider}` | GET | List models for a provider |
+| `/health` | GET | Backend health check |
+
+---
 
 ## Logging
 
 Logs are printed to the console and controlled via `utils/logger.py`.
+
+---
+
+**Engineered by UMAR MUKTHAR** • [@UMARMUKTHAR03](https://github.com/UMARMUKTHAR03)
