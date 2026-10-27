@@ -1,15 +1,15 @@
-# 🧠 NexusRAG AI — Client
+# 🤖 RAG AI Chatbot — Client
 
-This is the **Streamlit-based frontend** for NexusRAG AI. It provides users with a conversational interface to upload PDF documents, ask questions grounded in their content, inspect vectorstore responses, and export conversation history.
+This is the **Streamlit-based frontend** for RAG AI Chatbot. It provides users with an intuitive conversational interface to upload PDF documents, ask questions grounded strictly in their content, inspect vectorstore similarity search responses, and export chat sessions.
 
 ---
 
 ## Features
 
 - 📄 Upload and chat with multiple PDFs
-- 🧠 Choose between LLM providers (Groq, Gemini)
-- 🔬 Inspector to test direct vectorstore queries
-- 📥 Downloadable chat history (CSV)
+- 🧠 Choose between LLM providers (Groq Cloud, Google Gemini)
+- 🔬 Inspector tab to test direct vectorstore retrieval
+- 📥 Downloadable chat history (CSV export)
 
 ---
 
@@ -21,13 +21,13 @@ client/
 ├── state/
 │   └── session.py              # Handles session state setup
 ├── components/
-│   ├── chat.py                 # All chat-related UI: input, history, uploads
-│   ├── sidebar.py              # All sidebar elements: model selector, upload, inspect
+│   ├── chat.py                 # Chat UI: input, history, uploads
+│   ├── sidebar.py              # Sidebar: model selector, uploader, utilities
 │   └── inspector.py            # Inspector to test vectorstore responses
 ├── utils/
 │   ├── api.py                  # Server communication
-│   ├── config.py               # API_URL etc.
-│   └── helpers.py              # High-level orchestration (calls to api.py)
+│   ├── config.py               # API_URL configuration
+│   └── helpers.py              # High-level orchestration
 ```
 
 ---
@@ -59,7 +59,7 @@ pip3 install -r requirements.txt
 
 ## ▶️ Usage
 
-Run the app:
+Run the client:
 
 ```bash
 cd rag-ai-chatbot/client
@@ -99,7 +99,7 @@ Chat history is saved in the session state and can be exported as a CSV with the
 
 | Question | Answer | Model Provider | Model Name | PDF File | Timestamp |
 |----------|--------|----------------|------------|----------|-----------|
-| What is this PDF about? | This PDF explains... | Groq | llama3-70b-8192 | file1.pdf | 2026-10-27 |
+| What is this PDF about? | This PDF explains... | Groq | llama3-70b-8192 | document.pdf | 2026-10-27 |
 
 ---
 
