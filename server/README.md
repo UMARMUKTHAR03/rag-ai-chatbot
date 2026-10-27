@@ -1,6 +1,6 @@
-# 🤖 RAG PDFBot — Server
+# 🤖 RAG AI Chatbot — Server
 
-This is the **FastAPI backend** for RAG PDFBot. It handles PDF processing, vectorstore embedding via ChromaDB, LLM chain execution through LangChain, and exposes RESTful API endpoints for the Streamlit frontend.
+This is the **FastAPI backend** for RAG AI Chatbot. It handles PDF processing, vectorstore embedding via ChromaDB, LLM chain execution through LangChain, and exposes RESTful API endpoints for the Streamlit frontend.
 
 ---
 
