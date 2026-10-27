@@ -721,7 +721,14 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script>
     if (typeof pdfjsLib !== 'undefined') {
-      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      try {
+        const workerBlob = new Blob([
+          'importScripts("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js");'
+        ], { type: 'application/javascript' });
+        pdfjsLib.GlobalWorkerOptions.workerSrc = URL.createObjectURL(workerBlob);
+      } catch (e) {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      }
     }
   </script>
 </head>
@@ -937,6 +944,12 @@
           'What benchmark scores did the model achieve on truthfulness?',
           'How is red-teaming conducted for safety evaluations?'
         ],
+        extractedChunks: [
+          { id: 'Chunk-P1-1', page: 1, text: 'Executive Summary: This AI Safety Report outlines verifiable protocols for large language model alignment, focusing on truthfulness, robustness, and refusal of harmful queries.' },
+          { id: 'Chunk-P4-1', page: 4, text: 'Section 3: Alignment Protocols. The safety framework implements Direct Preference Optimization (DPO) combined with rule-based reward penalties to suppress deceptive behaviors and guarantee factual consistency.' },
+          { id: 'Chunk-P7-1', page: 7, text: 'Table 2: Evaluation Results. The model achieved an 89.4% truthfulness score on TruthfulQA, outperforming baseline models by 14.2% across multiple benchmark splits.' },
+          { id: 'Chunk-P11-1', page: 11, text: 'Section 5.1: Adversarial Testing and Red-Teaming. Adversarial red-teaming involved automated jailbreak evaluation alongside 120 expert human analysts testing prompt injection defenses.' }
+        ],
         qa: {
           'alignment': {
             answer: 'According to <strong>Section 3 (Alignment Protocols)</strong> <span class="citation-tag">[Page 4]</span>, the safety framework implements Direct Preference Optimization (DPO) combined with rule-based reward penalties to suppress deceptive behaviors.',
@@ -964,32 +977,44 @@
           'What credit penalties apply if downtime exceeds 0.01%?',
           'What billing cycle discounts are offered for annual plans?'
         ],
+        extractedChunks: [
+          { id: 'Chunk-P1-1', page: 1, text: 'Cloud Infrastructure Service Level Agreement (SLA) & Enterprise Pricing Overview.' },
+          { id: 'Chunk-P2-1', page: 2, text: 'Section 2.1: Service Guarantees. Under Section 2.1, the infrastructure provides a guaranteed 99.99% monthly uptime SLA across all multi-region Kubernetes clusters.' },
+          { id: 'Chunk-P4-1', page: 4, text: 'Section 4.3: Financial Penalties and Credits. If downtime exceeds 0.01% in any billing cycle, customers automatically receive a 15% service credit against the following monthly invoice.' },
+          { id: 'Chunk-P6-1', page: 6, text: 'Section 5: Billing Terms. Annual enterprise commitment tiers receive an upfront 20% billing discount with reserved GPU instance allocations.' }
+        ],
         qa: {
           'uptime': {
-            answer: 'Under <strong>Section 2.1 (Service Guarantees)</strong> <span class="citation-tag">[Page 2]</span>, the platform guarantees a strict <strong>99.99% monthly availability SLA</strong> across all multi-region clusters.',
+            answer: 'Under <strong>Section 2.1 (Service Guarantees)</strong> <span class="citation-tag">[Page 2]</span>, the infrastructure provides a guaranteed <strong>99.99% monthly uptime SLA</strong> across all multi-region Kubernetes clusters.',
             citation: 'Cloud_SLA_Pricing.pdf • Page 2',
-            score: 0.956
+            score: 0.935
           },
           'credit': {
-            answer: 'According to <strong>Section 4.3 (Downtime Credits)</strong> <span class="citation-tag">[Page 5]</span>, monthly downtime exceeding 0.01% triggers a <strong>10% service credit</strong>, escalating to 25% for outages exceeding 60 minutes.',
-            citation: 'Cloud_SLA_Pricing.pdf • Page 5',
-            score: 0.923
+            answer: 'In <strong>Section 4.3 (Financial Penalties)</strong> <span class="citation-tag">[Page 4]</span>, if downtime exceeds 0.01% in a given billing cycle, customers automatically receive a <strong>15% service credit</strong> against subsequent invoices.',
+            citation: 'Cloud_SLA_Pricing.pdf • Page 4',
+            score: 0.918
           },
-          'annual': {
-            answer: 'In <strong>Schedule A (Pricing Tiers)</strong> <span class="citation-tag">[Page 6]</span>, enterprise annual commitments receive an upfront <strong>20% discount</strong> with included dedicated technical support.',
+          'discount': {
+            answer: 'According to <strong>Section 5 (Billing Terms)</strong> <span class="citation-tag">[Page 6]</span>, annual enterprise commitments receive an upfront <strong>20% billing discount</strong> with reserved GPU instance allocations.',
             citation: 'Cloud_SLA_Pricing.pdf • Page 6',
             score: 0.892
           }
         }
       },
-      'cybersecurity': {
+      'gdpr_policy': {
         name: 'Security_Policy.pdf',
-        pages: 11,
+        pages: 12,
         chunks: 28,
         chips: [
           'What encryption algorithms are required for data at rest?',
           'What is the automated retention purge policy for dormant accounts?',
           'How often are multi-factor authentication credentials rotated?'
+        ],
+        extractedChunks: [
+          { id: 'Chunk-P1-1', page: 1, text: 'Enterprise Information Security & Data Protection Standards Policy Manual.' },
+          { id: 'Chunk-P3-1', page: 3, text: 'Policy 104.B: Cryptographic Controls. All stored data must be encrypted with AES-256-GCM using hardware security module (HSM) managed keys.' },
+          { id: 'Chunk-P8-1', page: 8, text: 'Section 4.2: Data Lifecycle. Dormant user telemetry records undergo scheduled automated deletion after 90 continuous days of inactivity.' },
+          { id: 'Chunk-P9-1', page: 9, text: 'Section 6.1: Access Management. Privileged access sessions require FIDO2/WebAuthn hardware tokens with session re-authentication every 8 hours.' }
         ],
         qa: {
           'encryption': {
@@ -1055,81 +1080,162 @@
       }
     }
 
-    function processUploadedFile(file) {
+    async function processUploadedFile(file) {
       const banner = document.getElementById('ingestionBanner');
       const fill = document.getElementById('ingestionBarFill');
       const percent = document.getElementById('ingestionPercent');
       const statusText = document.getElementById('ingestionStatusText');
 
       banner.classList.add('active');
-      fill.style.width = '20%';
-      percent.innerText = '20%';
-      statusText.innerText = '📄 Parsing ' + file.name + '...';
+      fill.style.width = '15%';
+      percent.innerText = '15%';
+      statusText.innerText = '📄 Reading ' + file.name + '...';
 
-      setTimeout(() => {
-        fill.style.width = '65%';
-        percent.innerText = '65%';
-        statusText.innerText = '🔬 Generating ChromaDB token chunks...';
-      }, 400);
+      let extractedChunks = [];
+      let numPages = 1;
 
-      setTimeout(() => {
+      try {
+        if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+          fill.style.width = '35%';
+          percent.innerText = '35%';
+          statusText.innerText = '⚡ Parsing PDF pages via PDF.js...';
+
+          const arrayBuffer = await file.arrayBuffer();
+          const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+          const pdf = await loadingTask.promise;
+          numPages = pdf.numPages;
+
+          fill.style.width = '60%';
+          percent.innerText = '60%';
+          statusText.innerText = `🔍 Extracting text from ${numPages} pages...`;
+
+          for (let p = 1; p <= numPages; p++) {
+            const page = await pdf.getPage(p);
+            const content = await page.getTextContent();
+            const pageText = content.items.map(item => item.str).join(' ').replace(/\s+/g, ' ').trim();
+
+            if (pageText.length > 0) {
+              // Chunk page text into semantic segments of ~350-500 characters
+              const sentences = pageText.match(/[^.!?]+[.!?]+(\s|$)|[^.!?]+$/g) || [pageText];
+              let cur = '';
+              let sub = 1;
+              for (const s of sentences) {
+                if ((cur + ' ' + s).length > 420 && cur.length > 80) {
+                  extractedChunks.push({
+                    id: `Chunk-P${p}-${sub++}`,
+                    page: p,
+                    text: cur.trim()
+                  });
+                  cur = s;
+                } else {
+                  cur = cur ? (cur + ' ' + s) : s;
+                }
+              }
+              if (cur.trim().length > 0) {
+                extractedChunks.push({
+                  id: `Chunk-P${p}-${sub}`,
+                  page: p,
+                  text: cur.trim()
+                });
+              }
+            }
+          }
+        } else {
+          // Plain text / markdown fallback
+          const text = await file.text();
+          const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim().length > 0);
+          paragraphs.forEach((p, idx) => {
+            extractedChunks.push({
+              id: `Chunk-${idx + 1}`,
+              page: 1 + Math.floor(idx / 3),
+              text: p.trim()
+            });
+          });
+          numPages = Math.max(1, Math.ceil(extractedChunks.length / 3));
+        }
+
+        if (extractedChunks.length === 0) {
+          extractedChunks.push({
+            id: 'Chunk-P1-1',
+            page: 1,
+            text: `Document ${file.name} was indexed (${numPages} pages). Note: If this is an image-based scanned PDF, OCR extraction may be required.`
+          });
+        }
+
+        fill.style.width = '90%';
+        percent.innerText = '90%';
+        statusText.innerText = '🔬 Indexing ChromaDB vector embeddings...';
+
+        await new Promise(r => setTimeout(r, 300));
+
         fill.style.width = '100%';
         percent.innerText = '100%';
         statusText.innerText = '✅ Vector Index Ready!';
 
-        const fileName = file.name;
-        const estimatedPages = Math.max(1, Math.round(file.size / 30000));
-        const estimatedChunks = Math.max(4, estimatedPages * 3);
+        const totalChunks = extractedChunks.length;
+
+        // Context-aware dynamic chips
+        let dynamicChips = [
+          `What is the main topic of ${file.name}?`,
+          `What key definitions and principles are stated?`,
+          `Summarize the primary takeaways from ${file.name}`
+        ];
+
+        // Detect topic/unit cues
+        const topicMatch = extractedChunks.find(c => /unit\s+[0-9ivx]+|chapter\s+[0-9ivx]+|safety|ethics|specification|guideline/i.test(c.text));
+        if (topicMatch) {
+          const m = topicMatch.text.match(/(?:unit\s+[0-9ivx]+|chapter\s+[0-9ivx]+|section\s+[0-9ivx]+)[:\s\-]+([^.!?\n]{4,45})/i);
+          if (m && m[1]) {
+            dynamicChips[0] = `What is covered in ${m[0].trim()}?`;
+          }
+          if (/safety/i.test(topicMatch.text)) {
+            dynamicChips[1] = `What is meant by safety in ${file.name}?`;
+          }
+        }
 
         documentStore['uploaded'] = {
-          name: fileName,
-          pages: estimatedPages,
-          chunks: estimatedChunks,
-          chips: [
-            `What is the executive summary of ${fileName}?`,
-            `What are the core technical specifications in ${fileName}?`,
-            `What compliance and operational requirements are outlined?`
-          ],
-          qa: {
-            'summary': {
-              answer: `Based on your uploaded document <strong>${fileName}</strong> <span class="citation-tag">[Page 1]</span>, the document specifies core system architecture, operational frameworks, and validation protocols.`,
-              citation: `${fileName} • Page 1`,
-              score: 0.941
-            },
-            'specification': {
-              answer: `According to <strong>Section 2 (Technical Specifications)</strong> in <strong>${fileName}</strong> <span class="citation-tag">[Page ${Math.min(2, estimatedPages)}]</span>, latency thresholds are bounded under 50ms with 99.9% uptime compliance.`,
-              citation: `${fileName} • Page ${Math.min(2, estimatedPages)}`,
-              score: 0.925
-            },
-            'compliance': {
-              answer: `In <strong>Section 4 (Operational Requirements)</strong> of <strong>${fileName}</strong> <span class="citation-tag">[Page ${estimatedPages}]</span>, audit logging and access control policies must be reviewed bi-annually.`,
-              citation: `${fileName} • Page ${estimatedPages}`,
-              score: 0.898
-            }
-          }
+          name: file.name,
+          pages: numPages,
+          chunks: totalChunks,
+          extractedChunks: extractedChunks,
+          chips: dynamicChips,
+          qa: {}
         };
 
         activeDocKey = 'uploaded';
         document.querySelectorAll('.sample-doc-btn').forEach(b => b.classList.remove('active'));
 
-        document.getElementById('activeDocTitle').innerText = '📄 ' + fileName;
-        document.getElementById('activeDocMeta').innerText = `${estimatedPages} Pages • ${estimatedChunks} Chunks • Vector Index Ready`;
+        document.getElementById('activeDocTitle').innerText = '📄 ' + file.name;
+        document.getElementById('activeDocMeta').innerText = `${numPages} Pages • ${totalChunks} Chunks • Vector Index Ready`;
 
         updateChips();
 
+        lastRetrievedChunks = extractedChunks.slice(0, 3).map(c => ({
+          id: c.id,
+          doc: file.name,
+          score: '0.985',
+          text: c.text
+        }));
+
         appendAssistantMessage(
-          `Successfully processed and indexed <strong>${fileName}</strong>! Extracted ${estimatedPages} pages into ${estimatedChunks} ChromaDB vector chunks. You can now chat directly with your document.`,
-          fileName,
-          13.8,
-          []
+          `Successfully processed and indexed <strong>${file.name}</strong>! Extracted ${numPages} pages into ${totalChunks} ChromaDB vector chunks. You can now chat directly with your document.`,
+          file.name,
+          14.2,
+          lastRetrievedChunks
         );
 
         setTimeout(() => {
           banner.classList.remove('active');
           fill.style.width = '0%';
-        }, 1800);
+        }, 1600);
 
-      }, 900);
+      } catch (err) {
+        console.error('PDF parsing error:', err);
+        fill.style.width = '100%';
+        percent.innerText = '100%';
+        statusText.innerText = '⚠️ Ingestion error: ' + (err.message || 'Could not parse document');
+        setTimeout(() => { banner.classList.remove('active'); }, 2500);
+      }
     }
 
     function loadSampleDoc(key) {
@@ -1413,7 +1519,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'rag_ai_chatbot_history.csv';
+      a.download = 'rag_pdfbot_chat_history.csv';
       a.click();
     }
 
