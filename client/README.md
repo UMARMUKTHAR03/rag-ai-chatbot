@@ -1,6 +1,6 @@
-# 🤖 RAG PDFBot — Client
+# 🤖 RAG AI Chatbot — Client
 
-This is the **Streamlit-based frontend** for RAG PDFBot. It provides users with an intuitive conversational interface to upload PDF documents, ask questions grounded strictly in their content, inspect vectorstore similarity search responses, and export chat sessions.
+This is the **Streamlit-based frontend** for RAG AI Chatbot. It provides users with an intuitive conversational interface to upload PDF documents, ask questions grounded strictly in their content, inspect vectorstore similarity search responses, and export chat sessions.
 
 ---
 
