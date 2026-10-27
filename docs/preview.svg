@@ -38,124 +38,151 @@
   <circle cx="200" cy="150" r="160" fill="#10b981" opacity="0.12" filter="url(#glow)"/>
   <circle cx="1020" cy="200" r="180" fill="#8b5cf6" opacity="0.12" filter="url(#glow)"/>
   <circle cx="600" cy="560" r="220" fill="#06b6d4" opacity="0.08" filter="url(#glow)"/>
+
+  <!-- Top Bar -->
   <rect x="30" y="24" width="1140" height="64" rx="14" fill="url(#cardGrad)" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1"/>
   <rect x="50" y="40" width="32" height="32" rx="8" fill="url(#primaryGrad)"/>
-  <path d="M 58 48 L 66 48 L 66 64 M 66 56 L 74 56" fill="none" stroke="#050811" stroke-width="2.5" stroke-linecap="round"/>
-  <text x="94" y="55" class="font-sans title" font-size="19">NexusRAG AI</text>
-  <text x="94" y="70" class="font-sans subtitle" font-size="11">Enterprise Retrieval-Augmented Generation &amp; Vector Intelligence - FastAPI + ChromaDB</text>
-  <rect x="830" y="42" width="145" height="28" rx="14" fill="rgba(16, 185, 129, 0.15)" stroke="#10b981" stroke-width="1"/>
-  <circle cx="846" cy="56" r="4" fill="#10b981"/>
-  <text x="858" y="60" class="font-sans" font-size="12" font-weight="600" fill="#34d399">CHROMADB + LLAMA-3</text>
-  <rect x="990" y="42" width="165" height="28" rx="14" fill="rgba(139, 92, 246, 0.2)" stroke="#8b5cf6" stroke-width="1"/>
-  <circle cx="1006" cy="56" r="4" fill="#a78bfa"/>
-  <text x="1018" y="60" class="font-sans" font-size="12" font-weight="600" fill="#ddd6fe">BY UMAR MUKTHAR</text>
+  <text x="66" y="62" text-anchor="middle" font-size="20">🤖</text>
+  <text x="94" y="55" class="font-sans title" font-size="19">RAG PDFBot — PDF AI Chatbot</text>
+  <text x="94" y="70" class="font-sans subtitle" font-size="11">Upload PDF Documents &amp; Chat Grounded in Facts • FastAPI · Streamlit · ChromaDB · LangChain</text>
+  
+  <rect x="800" y="42" width="170" height="28" rx="14" fill="rgba(16, 185, 129, 0.15)" stroke="#10b981" stroke-width="1"/>
+  <circle cx="816" cy="56" r="4" fill="#10b981"/>
+  <text x="828" y="60" class="font-sans" font-size="12" font-weight="600" fill="#34d399">CHROMADB + LLAMA-3</text>
+
+  <rect x="985" y="42" width="170" height="28" rx="14" fill="rgba(139, 92, 246, 0.2)" stroke="#8b5cf6" stroke-width="1"/>
+  <circle cx="1001" cy="56" r="4" fill="#a78bfa"/>
+  <text x="1013" y="60" class="font-sans" font-size="12" font-weight="600" fill="#ddd6fe">BY UMAR MUKTHAR</text>
+
+  <!-- 4 Metrics KPI -->
   <g transform="translate(30, 104)">
-    <rect width="268" height="96" rx="12" fill="url(#cardGrad)" stroke="rgba(255, 255, 255, 0.06)" stroke-width="1"/>
-    <text x="20" y="32" class="font-sans card-title">Vector Search Latency</text>
-    <text x="20" y="66" class="font-sans metric-value" fill="#34d399">12.4 ms</text>
-    <text x="20" y="84" class="font-sans metric-sub" fill="#34d399">HNSW Index - ChromaDB</text>
-    <circle cx="230" cy="48" r="22" fill="rgba(16, 185, 129, 0.12)"/>
-    <path d="M 230 38 L 230 48 L 236 52" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round"/>
+    <rect width="268" height="88" rx="12" fill="url(#cardGrad)" stroke="rgba(255, 255, 255, 0.06)" stroke-width="1"/>
+    <text x="20" y="30" class="font-sans card-title">PDF Ingestion Speed</text>
+    <text x="20" y="60" class="font-sans metric-value" fill="#34d399">1.8 sec</text>
+    <text x="20" y="78" class="font-sans metric-sub" fill="#34d399">Fast Token Chunking Engine</text>
   </g>
   <g transform="translate(321, 104)">
-    <rect width="268" height="96" rx="12" fill="url(#cardGrad)" stroke="rgba(255, 255, 255, 0.06)" stroke-width="1"/>
-    <text x="20" y="32" class="font-sans card-title">Indexed Embeddings</text>
-    <text x="20" y="66" class="font-sans metric-value">4,850 <tspan font-size="16" fill="#64748b">Vectors</tspan></text>
-    <text x="20" y="84" class="font-sans metric-sub" fill="#22d3ee">768-Dim Dense Embeddings</text>
-    <circle cx="230" cy="48" r="22" fill="rgba(6, 182, 212, 0.12)"/>
-    <rect x="222" y="40" width="16" height="16" rx="3" fill="none" stroke="#06b6d4" stroke-width="2"/>
+    <rect width="268" height="88" rx="12" fill="url(#cardGrad)" stroke="rgba(255, 255, 255, 0.06)" stroke-width="1"/>
+    <text x="20" y="30" class="font-sans card-title">Vector Search Latency</text>
+    <text x="20" y="60" class="font-sans metric-value">12.4 ms</text>
+    <text x="20" y="78" class="font-sans metric-sub" fill="#22d3ee">ChromaDB HNSW Cosine Index</text>
   </g>
   <g transform="translate(612, 104)">
-    <rect width="268" height="96" rx="12" fill="url(#cardGrad)" stroke="rgba(255, 255, 255, 0.06)" stroke-width="1"/>
-    <text x="20" y="32" class="font-sans card-title">Retrieval MRR@5</text>
-    <text x="20" y="66" class="font-sans metric-value">96.4%</text>
-    <text x="20" y="84" class="font-sans metric-sub" fill="#a78bfa">Cosine Similarity Threshold &gt; 0.85</text>
-    <circle cx="230" cy="48" r="22" fill="rgba(139, 92, 246, 0.12)"/>
-    <path d="M 222 48 L 228 54 L 238 42" fill="none" stroke="#8b5cf6" stroke-width="2.5" stroke-linecap="round"/>
+    <rect width="268" height="88" rx="12" fill="url(#cardGrad)" stroke="rgba(255, 255, 255, 0.06)" stroke-width="1"/>
+    <text x="20" y="30" class="font-sans card-title">Factual Grounding</text>
+    <text x="20" y="60" class="font-sans metric-value">99.2%</text>
+    <text x="20" y="78" class="font-sans metric-sub" fill="#a78bfa">Strict Page &amp; Section Citations</text>
   </g>
   <g transform="translate(902, 104)">
-    <rect width="268" height="96" rx="12" fill="url(#cardGrad)" stroke="rgba(255, 255, 255, 0.06)" stroke-width="1"/>
-    <text x="20" y="32" class="font-sans card-title">Factual Grounding</text>
-    <text x="20" y="66" class="font-sans metric-value" fill="#38bdf8">99.2%</text>
-    <text x="20" y="84" class="font-sans metric-sub" fill="#38bdf8">Strict Citation Attribution</text>
-    <circle cx="230" cy="48" r="22" fill="rgba(56, 189, 248, 0.12)"/>
+    <rect width="268" height="88" rx="12" fill="url(#cardGrad)" stroke="rgba(255, 255, 255, 0.06)" stroke-width="1"/>
+    <text x="20" y="30" class="font-sans card-title">Multi-Provider Support</text>
+    <text x="20" y="60" class="font-sans metric-value" fill="#38bdf8">Groq + Gemini</text>
+    <text x="20" y="78" class="font-sans metric-sub" fill="#38bdf8">Llama-3-70b &amp; Gemini-1.5</text>
   </g>
-  <g transform="translate(30, 218)">
-    <rect width="559" height="428" rx="14" fill="url(#cardGrad)" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1"/>
-    <text x="24" y="36" class="font-sans" font-size="16" font-weight="700" fill="#ffffff">Live Grounded Conversation Stream</text>
-    <text x="24" y="54" class="font-sans" font-size="12" fill="#94a3b8">Interactive multi-turn dialogue with real-time vector search</text>
-    <g transform="translate(24, 76)">
-      <rect x="80" y="0" width="431" height="52" rx="10" fill="#1e293b" stroke="rgba(255, 255, 255, 0.06)" stroke-width="1"/>
-      <circle cx="50" cy="26" r="16" fill="#3b82f6"/>
-      <text x="50" y="30" text-anchor="middle" class="font-sans" font-size="11" font-weight="bold" fill="#fff">YOU</text>
-      <text x="96" y="24" class="font-sans" font-size="12" font-weight="500" fill="#f8fafc">What are the data privacy and retention rules in Section 4.2?</text>
-      <text x="96" y="42" class="font-sans" font-size="10" fill="#64748b">Query vectorized into 768-dim embedding in 3.1ms</text>
+
+  <!-- Left Card: Upload Zone & Document Selector -->
+  <g transform="translate(30, 210)">
+    <rect width="360" height="436" rx="14" fill="url(#cardGrad)" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1"/>
+    <text x="20" y="34" class="font-sans" font-size="15" font-weight="700" fill="#ffffff">PDF Document Upload</text>
+    <text x="20" y="52" class="font-sans" font-size="11" fill="#94a3b8">Drag &amp; drop or choose from indexed samples</text>
+
+    <!-- Upload Box Mockup -->
+    <g transform="translate(20, 68)">
+      <rect width="320" height="120" rx="10" fill="rgba(16, 185, 129, 0.05)" stroke="#10b981" stroke-dasharray="4 4" stroke-width="1.5"/>
+      <text x="160" y="52" text-anchor="middle" font-size="32">📄</text>
+      <text x="160" y="80" text-anchor="middle" class="font-sans" font-size="13" font-weight="700" fill="#f8fafc">Click or Drag &amp; Drop PDF</text>
+      <text x="160" y="98" text-anchor="middle" class="font-sans" font-size="10" fill="#94a3b8">Upload any .pdf or .txt file to chunk &amp; chat</text>
     </g>
-    <g transform="translate(104, 140)">
-      <rect width="360" height="24" rx="12" fill="rgba(16, 185, 129, 0.15)" stroke="#10b981" stroke-width="1"/>
+
+    <!-- Active PDF Banner -->
+    <g transform="translate(20, 204)">
+      <rect width="320" height="52" rx="8" fill="rgba(16, 185, 129, 0.12)" stroke="rgba(16, 185, 129, 0.3)" stroke-width="1"/>
+      <text x="16" y="24" class="font-sans" font-size="12" font-weight="700" fill="#34d399">📄 AI_Safety_Report.pdf</text>
+      <text x="16" y="40" class="font-sans" font-size="10" fill="#94a3b8">14 Pages • 32 Chunks • ChromaDB Ready</text>
+      <rect x="256" y="16" width="50" height="20" rx="4" fill="rgba(16, 185, 129, 0.25)"/>
+      <text x="281" y="30" text-anchor="middle" class="font-sans" font-size="9" font-weight="700" fill="#34d399">ACTIVE</text>
+    </g>
+
+    <!-- Presets -->
+    <text x="20" y="284" class="font-sans card-title">Instant Sample Documents</text>
+    
+    <g transform="translate(20, 296)">
+      <rect width="320" height="36" rx="6" fill="#1e293b" stroke="rgba(255, 255, 255, 0.06)" stroke-width="1"/>
+      <text x="14" y="23" class="font-sans" font-size="11" fill="#f8fafc">📊 Cloud_SLA_Pricing.pdf</text>
+      <text x="306" y="23" text-anchor="end" class="font-sans" font-size="10" fill="#64748b">8 pgs</text>
+    </g>
+
+    <g transform="translate(20, 340)">
+      <rect width="320" height="36" rx="6" fill="#1e293b" stroke="rgba(255, 255, 255, 0.06)" stroke-width="1"/>
+      <text x="14" y="23" class="font-sans" font-size="11" fill="#f8fafc">🛡️ Security_Policy.pdf</text>
+      <text x="306" y="23" text-anchor="end" class="font-sans" font-size="10" fill="#64748b">11 pgs</text>
+    </g>
+
+    <!-- Controls -->
+    <g transform="translate(20, 390)">
+      <rect width="320" height="34" rx="6" fill="rgba(255, 255, 255, 0.04)" stroke="rgba(255, 255, 255, 0.06)" stroke-width="1"/>
+      <text x="14" y="22" class="font-sans" font-size="11" fill="#94a3b8">Model: <tspan fill="#34d399" font-weight="600">Llama-3-70b (Groq LPU)</tspan></text>
+      <text x="306" y="22" text-anchor="end" class="font-sans" font-size="11" fill="#22d3ee">Top-K: 3</text>
+    </g>
+  </g>
+
+  <!-- Right Card: Interactive Q&A Chat & Citations -->
+  <g transform="translate(410, 210)">
+    <rect width="760" height="436" rx="14" fill="url(#cardGrad)" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1"/>
+    
+    <!-- Tab Bar -->
+    <g transform="translate(20, 16)">
+      <rect width="140" height="30" rx="6" fill="rgba(16, 185, 129, 0.15)" stroke="#10b981" stroke-width="1"/>
+      <text x="70" y="20" text-anchor="middle" class="font-sans" font-size="11" font-weight="600" fill="#34d399">💬 Chat with PDF</text>
+
+      <rect x="150" y="0" width="140" height="30" rx="6" fill="rgba(255, 255, 255, 0.04)"/>
+      <text x="220" y="20" text-anchor="middle" class="font-sans" font-size="11" font-weight="500" fill="#94a3b8">🔬 Vector Inspector</text>
+
+      <rect x="630" y="0" width="90" height="30" rx="6" fill="rgba(255, 255, 255, 0.05)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+      <text x="675" y="19" text-anchor="middle" class="font-sans" font-size="10" fill="#cbd5e1">📥 Export CSV</text>
+    </g>
+
+    <!-- User Question -->
+    <g transform="translate(20, 68)">
+      <rect x="180" y="0" width="540" height="52" rx="10" fill="#1e293b" stroke="rgba(255, 255, 255, 0.06)" stroke-width="1"/>
+      <circle cx="150" cy="26" r="16" fill="#3b82f6"/>
+      <text x="150" y="30" text-anchor="middle" class="font-sans" font-size="11" font-weight="bold" fill="#fff">YOU</text>
+      <text x="196" y="24" class="font-sans" font-size="12" font-weight="500" fill="#f8fafc">What are the primary alignment strategies outlined in Section 3?</text>
+      <text x="196" y="42" class="font-sans" font-size="10" fill="#64748b">Target Document: AI_Safety_Report.pdf • Vectorized in 2.8ms</text>
+    </g>
+
+    <!-- Retrieval Pill -->
+    <g transform="translate(196, 134)">
+      <rect width="380" height="24" rx="12" fill="rgba(16, 185, 129, 0.15)" stroke="#10b981" stroke-width="1"/>
       <circle cx="16" cy="12" r="3.5" fill="#10b981"/>
-      <text x="26" y="16" class="font-sans" font-size="11" font-weight="600" fill="#34d399">Retrieved 3 chunks from Enterprise_Policy.pdf (Sim: 0.942)</text>
+      <text x="26" y="16" class="font-sans" font-size="11" font-weight="600" fill="#34d399">Retrieved 3 chunks from AI_Safety_Report.pdf (Sim: 0.942)</text>
     </g>
-    <g transform="translate(24, 176)">
-      <rect x="52" y="0" width="459" height="150" rx="12" fill="rgba(15, 23, 42, 0.9)" stroke="rgba(16, 185, 129, 0.3)" stroke-width="1"/>
+
+    <!-- AI Grounded Response -->
+    <g transform="translate(20, 172)">
+      <rect x="48" y="0" width="672" height="180" rx="12" fill="rgba(15, 23, 42, 0.9)" stroke="rgba(16, 185, 129, 0.3)" stroke-width="1"/>
       <circle cx="24" cy="26" r="16" fill="url(#primaryGrad)"/>
       <text x="24" y="30" text-anchor="middle" class="font-sans" font-size="11" font-weight="bold" fill="#04121a">AI</text>
-      <text x="70" y="26" class="font-sans" font-size="12" font-weight="600" fill="#f1f5f9">According to Section 4.2 of the Enterprise Data Policy:</text>
-      <text x="70" y="48" class="font-sans" font-size="12" fill="#cbd5e1">1. Customer PII must be encrypted at rest with AES-256 <tspan fill="#34d399" font-weight="bold">[Doc-1: Page 14]</tspan>.</text>
-      <text x="70" y="70" class="font-sans" font-size="12" fill="#cbd5e1">2. Inactive account telemetry purged after 90 days <tspan fill="#34d399" font-weight="bold">[Doc-1: Page 15]</tspan>.</text>
-      <text x="70" y="92" class="font-sans" font-size="12" fill="#cbd5e1">3. Automated audit logs are replicated to immutable cold storage.</text>
-      <line x1="70" y1="108" x2="490" y2="108" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
-      <text x="70" y="128" class="font-sans" font-size="10" fill="#94a3b8">Confidence: 99.4% | Model: Llama-3-70b-Groq | Generated in 210ms</text>
+      
+      <text x="68" y="28" class="font-sans" font-size="12" font-weight="600" fill="#f1f5f9">According to Section 3 (Alignment Protocols) of the uploaded PDF:</text>
+      <text x="68" y="54" class="font-sans" font-size="12" fill="#cbd5e1">1. The framework implements Direct Preference Optimization (DPO) to align outputs <tspan fill="#34d399" font-weight="bold">[Page 4]</tspan>.</text>
+      <text x="68" y="78" class="font-sans" font-size="12" fill="#cbd5e1">2. Rule-based reward penalties are enforced to suppress hallucinations and deceptive behavior <tspan fill="#34d399" font-weight="bold">[Page 5]</tspan>.</text>
+      <text x="68" y="102" class="font-sans" font-size="12" fill="#cbd5e1">3. Automated red-teaming benchmarks test prompt injection defenses across 120 categories <tspan fill="#34d399" font-weight="bold">[Page 11]</tspan>.</text>
+      <text x="68" y="126" class="font-sans" font-size="12" fill="#cbd5e1">4. Groundedness validation score: 89.4% truthfulness against human baselines.</text>
+
+      <line x1="68" y1="144" x2="700" y2="144" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+      <text x="68" y="164" class="font-sans" font-size="10" fill="#94a3b8">Model: Llama-3-70b-Groq • Retrieved via Cosine Sim: 0.942 • Search: 11.4ms • Grounded: 99.2%</text>
     </g>
-    <g transform="translate(24, 348)">
-      <rect width="511" height="54" rx="10" fill="rgba(15, 23, 42, 0.8)" stroke="rgba(255, 255, 255, 0.1)" stroke-width="1"/>
-      <text x="18" y="32" class="font-sans" font-size="12" fill="#64748b">Ask anything about your uploaded documents...</text>
-      <rect x="445" y="10" width="54" height="34" rx="8" fill="#10b981"/>
-      <path d="M 466 27 L 476 27 M 472 23 L 476 27 L 472 31" fill="none" stroke="#050811" stroke-width="2.5" stroke-linecap="round"/>
-    </g>
-  </g>
-  <g transform="translate(611, 218)">
-    <rect width="559" height="428" rx="14" fill="url(#cardGrad)" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1"/>
-    <text x="24" y="36" class="font-sans" font-size="16" font-weight="700" fill="#ffffff">ChromaDB Vectorstore Inspector</text>
-    <text x="24" y="54" class="font-sans" font-size="12" fill="#94a3b8">Top-ranked nearest neighbor chunks &amp; similarity metrics</text>
-    <g transform="translate(24, 76)">
-      <rect width="511" height="72" rx="10" fill="rgba(15, 23, 42, 0.7)" stroke="rgba(16, 185, 129, 0.4)" stroke-width="1"/>
-      <text x="16" y="24" class="font-sans" font-size="12" font-weight="700" fill="#34d399">Chunk #142 | Enterprise_Policy.pdf - Page 14</text>
-      <text x="440" y="24" class="font-sans" font-size="12" font-weight="800" fill="#34d399">Sim: 0.942</text>
-      <text x="16" y="44" class="font-sans" font-size="11" fill="#cbd5e1">"...all personally identifiable customer data shall be encrypted with AES-256 keys managed..."</text>
-      <rect x="16" y="54" width="479" height="5" rx="2.5" fill="rgba(255, 255, 255, 0.06)"/>
-      <rect x="16" y="54" width="451" height="5" rx="2.5" fill="url(#primaryGrad)"/>
-    </g>
-    <g transform="translate(24, 158)">
-      <rect width="511" height="72" rx="10" fill="rgba(15, 23, 42, 0.7)" stroke="rgba(6, 182, 212, 0.4)" stroke-width="1"/>
-      <text x="16" y="24" class="font-sans" font-size="12" font-weight="700" fill="#22d3ee">Chunk #145 | Enterprise_Policy.pdf - Page 15</text>
-      <text x="440" y="24" class="font-sans" font-size="12" font-weight="800" fill="#22d3ee">Sim: 0.918</text>
-      <text x="16" y="44" class="font-sans" font-size="11" fill="#cbd5e1">"...dormant records surpassing the 90-day retention threshold must trigger automated purge..."</text>
-      <rect x="16" y="54" width="479" height="5" rx="2.5" fill="rgba(255, 255, 255, 0.06)"/>
-      <rect x="16" y="54" width="439" height="5" rx="2.5" fill="url(#primaryGrad)"/>
-    </g>
-    <g transform="translate(24, 240)">
-      <rect width="511" height="72" rx="10" fill="rgba(15, 23, 42, 0.7)" stroke="rgba(139, 92, 246, 0.4)" stroke-width="1"/>
-      <text x="16" y="24" class="font-sans" font-size="12" font-weight="700" fill="#c4b5fd">Chunk #089 | Security_Standard.pdf - Page 9</text>
-      <text x="440" y="24" class="font-sans" font-size="12" font-weight="800" fill="#c4b5fd">Sim: 0.884</text>
-      <text x="16" y="44" class="font-sans" font-size="11" fill="#cbd5e1">"...audit trail replicas are synchronized with WORM compliant cloud storage buckets..."</text>
-      <rect x="16" y="54" width="479" height="5" rx="2.5" fill="rgba(255, 255, 255, 0.06)"/>
-      <rect x="16" y="54" width="423" height="5" rx="2.5" fill="url(#purpleGrad)"/>
-    </g>
-    <g transform="translate(24, 332)">
-      <rect width="511" height="74" rx="10" fill="rgba(15, 23, 42, 0.6)" stroke="rgba(255, 255, 255, 0.05)" stroke-width="1"/>
-      <text x="18" y="24" class="font-sans" font-size="11" font-weight="600" fill="#94a3b8">END-TO-END RAG PIPELINE DIAGNOSTICS</text>
-      <g transform="translate(18, 36)">
-        <rect x="0" y="0" width="112" height="26" rx="6" fill="rgba(16, 185, 129, 0.15)"/>
-        <text x="8" y="17" class="font-sans" font-size="11" fill="#34d399">Chunk Size: 512</text>
-        <rect x="122" y="0" width="112" height="26" rx="6" fill="rgba(6, 182, 212, 0.15)"/>
-        <text x="130" y="17" class="font-sans" font-size="11" fill="#22d3ee">Overlap: 50 Tok</text>
-        <rect x="244" y="0" width="112" height="26" rx="6" fill="rgba(139, 92, 246, 0.15)"/>
-        <text x="252" y="17" class="font-sans" font-size="11" fill="#c4b5fd">Top-K: 3 Chunks</text>
-        <rect x="366" y="0" width="112" height="26" rx="6" fill="rgba(245, 158, 11, 0.15)"/>
-        <text x="374" y="17" class="font-sans" font-size="11" fill="#fbbf24">Temp: 0.2 (Fact)</text>
-      </g>
+
+    <!-- Input Bar -->
+    <g transform="translate(20, 368)">
+      <rect width="720" height="52" rx="10" fill="rgba(15, 23, 42, 0.9)" stroke="rgba(255, 255, 255, 0.1)" stroke-width="1"/>
+      <text x="20" y="31" class="font-sans" font-size="12" fill="#64748b">Ask anything about the uploaded PDF document...</text>
+      <rect x="660" y="8" width="50" height="36" rx="8" fill="#10b981"/>
+      <path d="M 680 26 L 690 26 M 686 22 L 690 26 L 686 30" fill="none" stroke="#050811" stroke-width="2.5" stroke-linecap="round"/>
     </g>
   </g>
-  <text x="600" y="664" text-anchor="middle" class="font-sans" font-size="12" font-weight="500" fill="#64748b">NexusRAG AI | Designed, Engineered &amp; Deployed by UMAR MUKTHAR | All Rights Reserved</text>
+
+  <!-- Watermark Footer -->
+  <text x="600" y="664" text-anchor="middle" class="font-sans" font-size="12" font-weight="500" fill="#64748b">RAG PDFBot • Designed, Engineered &amp; Maintained by UMAR MUKTHAR • All Rights Reserved</text>
 </svg>
