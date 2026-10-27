@@ -1,18 +1,18 @@
 <div align="center">
 
-# 🤖 RAG PDFBot — PDF AI Chatbot
+# 🤖 RAG AI Chatbot — Document Knowledge & PDF Assistant
 
 ### Intelligent PDF Document Q&A & Semantic Vector Search
 
 **FastAPI · Streamlit · ChromaDB · LangChain · Groq Cloud & Google Gemini**
 
-[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-RAG_PDFBot-10b981?style=for-the-badge&labelColor=0f172a)](https://umarmukthar03.github.io/rag-ai-chatbot/)
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-RAG_AI_Chatbot-10b981?style=for-the-badge&labelColor=0f172a)](https://umarmukthar03.github.io/rag-ai-chatbot/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-8b5cf6?style=for-the-badge&labelColor=0f172a)](./LICENSE)
 [![GitHub](https://img.shields.io/badge/GitHub-UMARMUKTHAR03-f8fafc?style=for-the-badge&logo=github&labelColor=0f172a)](https://github.com/UMARMUKTHAR03)
 
 <br>
 
-<img src="./docs/preview.svg" alt="RAG PDFBot Dashboard Preview" width="100%">
+<img src="./docs/preview.svg" alt="RAG AI Chatbot Dashboard Preview" width="100%">
 
 <br>
 
@@ -22,7 +22,7 @@
 
 ## ⚡ Overview
 
-**RAG PDFBot** is a production-ready, interactive Retrieval-Augmented Generation (RAG) system that allows you to upload PDF documents and ask questions grounded strictly in their factual content. 
+**RAG AI Chatbot** is a production-ready, interactive Retrieval-Augmented Generation (RAG) system that allows you to upload PDF documents and ask questions grounded strictly in their factual content. 
 
 The application utilizes a modular client-server architecture:
 - **Streamlit Frontend (`client/`):** Clean conversational interface, drag-and-drop PDF uploader, provider/model selector, similarity search inspector, and CSV chat export.
