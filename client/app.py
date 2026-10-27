@@ -19,12 +19,12 @@ from components.inspector import render_inspect_query
 
 def main():
   st.set_page_config(
-    page_title="NexusRAG AI — Enterprise Knowledge Intelligence",
-    page_icon="🧠",
+    page_title="RAG AI Chatbot — PDF AI Chatbot",
+    page_icon="🤖",
     layout="wide"
   )
-  st.title("🧠 NexusRAG AI")
-  st.caption("Enterprise Retrieval-Augmented Generation & Vector Intelligence • Engineered by UMAR MUKTHAR")
+  st.title("🤖 RAG AI Chatbot")
+  st.caption("Chat with your PDFs • Developed & Maintained by UMAR MUKTHAR")
 
   setup_session_state()
 
