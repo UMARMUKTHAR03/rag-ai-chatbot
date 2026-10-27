@@ -43,7 +43,7 @@
   <rect x="30" y="24" width="1140" height="64" rx="14" fill="url(#cardGrad)" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1"/>
   <rect x="50" y="40" width="32" height="32" rx="8" fill="url(#primaryGrad)"/>
   <text x="66" y="62" text-anchor="middle" font-size="20">🤖</text>
-  <text x="94" y="55" class="font-sans title" font-size="19">RAG PDFBot — PDF AI Chatbot</text>
+  <text x="94" y="55" class="font-sans title" font-size="19">RAG AI Chatbot — Document Knowledge Engine</text>
   <text x="94" y="70" class="font-sans subtitle" font-size="11">Upload PDF Documents &amp; Chat Grounded in Facts • FastAPI · Streamlit · ChromaDB · LangChain</text>
   
   <rect x="800" y="42" width="170" height="28" rx="14" fill="rgba(16, 185, 129, 0.15)" stroke="#10b981" stroke-width="1"/>
@@ -184,5 +184,5 @@
   </g>
 
   <!-- Watermark Footer -->
-  <text x="600" y="664" text-anchor="middle" class="font-sans" font-size="12" font-weight="500" fill="#64748b">RAG PDFBot • Designed, Engineered &amp; Maintained by UMAR MUKTHAR • All Rights Reserved</text>
+  <text x="600" y="664" text-anchor="middle" class="font-sans" font-size="12" font-weight="500" fill="#64748b">RAG AI Chatbot • Designed, Engineered &amp; Maintained by UMAR MUKTHAR • All Rights Reserved</text>
 </svg>
