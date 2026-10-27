@@ -1,6 +1,6 @@
-# 🤖 NexusRAG AI — Server
+# 🤖 RAG PDFBot — Server
 
-This is the **FastAPI backend** for NexusRAG AI. It handles PDF processing, vectorstore embedding via ChromaDB, LLM chain execution through LangChain, and exposes RESTful API endpoints for the Streamlit frontend.
+This is the **FastAPI backend** for RAG PDFBot. It handles PDF processing, vectorstore embedding via ChromaDB, LLM chain execution through LangChain, and exposes RESTful API endpoints for the Streamlit frontend.
 
 ---
 
@@ -9,7 +9,7 @@ This is the **FastAPI backend** for NexusRAG AI. It handles PDF processing, vect
 - ✅ Upload and process PDFs (token-based chunking)
 - 🧠 Chat with LLM using vectorstore retrieval (RAG)
 - 🔍 Inspect document chunks via similarity search
-- 🌐 Supports multiple providers (Groq, Google Gemini)
+- 🌐 Supports multiple providers (Groq Cloud, Google Gemini)
 
 ---
 
@@ -21,7 +21,7 @@ server/
 ├── config/                     # Environment and constants
 ├── core/                       # LLM logic, vectorstore, processing
 ├── utils/                      # Logger and helpers
-└── main.py                     # App entry point
+├── main.py                     # App entry point
 ```
 
 ---
@@ -67,11 +67,11 @@ GOOGLE_API_KEY = "your_google_key"
 
 ## ▶️ Usage
 
-Run the app:
+Run the server:
 
 ```bash
 cd rag-ai-chatbot/server
-uvicorn main:app --reload
+uvicorn main:app --reload --port 8000
 ```
 
 ---
