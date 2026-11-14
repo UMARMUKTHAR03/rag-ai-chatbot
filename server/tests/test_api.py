@@ -211,3 +211,46 @@ def test_synthesize_speech_endpoint():
     assert res.status_code == 200
     assert res.json()["status"] == "success"
     assert res.json()["data"]["supported"] is True
+
+def test_model_selection_fallback_logic():
+    from config.settings import MODEL_OPTIONS
+    # Verify default vision models never contain retired models
+    assert "meta-llama/llama-4-scout-17b-16e-instruct" not in MODEL_OPTIONS["groq"]["vision_models"]
+    assert "llama-3.2-11b-vision-preview" not in MODEL_OPTIONS["groq"]["vision_models"]
+    assert "llama-3.2-90b-vision-preview" not in MODEL_OPTIONS["groq"]["vision_models"]
+    assert "gemini-1.5-flash" not in MODEL_OPTIONS["gemini"]["vision_models"]
+    assert MODEL_OPTIONS["gemini"]["vision_models"][0] == "gemini-3.8-flash"
+
+    # Verify explicitly requested model falls back on transient error without retrying invalid/auth errors
+    with patch("core.multimodal.service.GROQ_API_KEY", "mock_groq_key"), patch("urllib.request.urlopen") as mock_url:
+        import urllib.error
+        # Simulate transient 503 error for requested model, then success on fallback model
+        mock_response = MagicMock()
+        mock_response.read.return_value = b'{"choices":[{"message":{"content":"fallback success"}}]}'
+        mock_response.__enter__.return_value = mock_response
+
+        mock_url.side_effect = [
+            urllib.error.HTTPError("https://api.groq.com", 503, "Service Unavailable", {}, io.BytesIO(b"overloaded")),
+            mock_response
+        ]
+
+        result = MultimodalService.chat_completion(
+            messages=[{"role": "user", "content": "hello"}],
+            provider="groq",
+            model="openai/gpt-oss-120b"
+        )
+        assert result["text"] == "fallback success"
+        assert result["model"] == "openai/gpt-oss-20b"
+
+    # Verify 401 unauthorized raises immediately without retrying
+    with patch("core.multimodal.service.GROQ_API_KEY", "mock_groq_key"), patch("urllib.request.urlopen") as mock_url_auth:
+        import urllib.error
+        mock_url_auth.side_effect = urllib.error.HTTPError("https://api.groq.com", 401, "Unauthorized", {}, io.BytesIO(b"invalid key"))
+        with pytest.raises(RuntimeError) as exc_info:
+            MultimodalService.chat_completion(
+                messages=[{"role": "user", "content": "hello"}],
+                provider="groq",
+                model="openai/gpt-oss-120b"
+            )
+        assert "401" in str(exc_info.value)
+        assert mock_url_auth.call_count == 1

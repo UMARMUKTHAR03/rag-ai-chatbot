@@ -192,7 +192,11 @@ class MultimodalService:
             if not GROQ_API_KEY:
                 raise ValueError("GROQ_API_KEY is not configured on the backend server.")
 
-            models_to_try = [model] if model else list(MODEL_OPTIONS["groq"]["chat_models"])
+            available_options = list(MODEL_OPTIONS["groq"]["chat_models"])
+            if model:
+                models_to_try = [model] + [m for m in available_options if m != model]
+            else:
+                models_to_try = available_options
             last_err = None
 
             for attempt_idx, selected_model in enumerate(models_to_try):
@@ -244,7 +248,11 @@ class MultimodalService:
             if not GOOGLE_API_KEY:
                 raise ValueError("GOOGLE_API_KEY is not configured on the backend server.")
 
-            models_to_try = [model] if model else list(MODEL_OPTIONS["gemini"]["chat_models"])
+            available_options = list(MODEL_OPTIONS["gemini"]["chat_models"])
+            if model:
+                models_to_try = [model] + [m for m in available_options if m != model]
+            else:
+                models_to_try = available_options
             last_err = None
 
             # Convert standard messages to Gemini contents structure
@@ -328,7 +336,11 @@ class MultimodalService:
             if not GOOGLE_API_KEY:
                 raise ValueError("GOOGLE_API_KEY is not configured on the backend server.")
 
-            models_to_try = [model] if model else list(MODEL_OPTIONS["gemini"]["vision_models"])
+            available_options = list(MODEL_OPTIONS["gemini"]["vision_models"])
+            if model:
+                models_to_try = [model] + [m for m in available_options if m != model]
+            else:
+                models_to_try = available_options
             last_err = None
 
             for attempt_idx, selected_model in enumerate(models_to_try):
@@ -390,7 +402,11 @@ class MultimodalService:
             if not GROQ_API_KEY:
                 raise ValueError("GROQ_API_KEY is not configured on the backend server.")
 
-            models_to_try = [model] if model else list(MODEL_OPTIONS["groq"]["vision_models"])
+            available_options = list(MODEL_OPTIONS["groq"]["vision_models"])
+            if model:
+                models_to_try = [model] + [m for m in available_options if m != model]
+            else:
+                models_to_try = available_options
             last_err = None
             data_url = f"data:{mime_type};base64,{b64_image}"
 

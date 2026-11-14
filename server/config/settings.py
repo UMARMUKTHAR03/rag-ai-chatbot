@@ -20,7 +20,7 @@ MODEL_OPTIONS = {
     "groq": {
         "playground": "https://console.groq.com",
         "chat_models": ["openai/gpt-oss-120b", "openai/gpt-oss-20b"],
-        "vision_models": ["meta-llama/llama-4-scout-17b-16e-instruct", "qwen/qwen3.8-27b"],
+        "vision_models": ["qwen/qwen3.8-27b"],
         "audio_models": ["whisper-large-v3-turbo"],
         "models": ["openai/gpt-oss-120b", "openai/gpt-oss-20b"]
     },

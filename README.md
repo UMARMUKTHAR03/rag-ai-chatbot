@@ -32,7 +32,7 @@ Unlike naive RAG systems that suffer from hallucination and opaque citations, Om
 1. **Multi-Format Ingestion**: Ingests `.pdf`, `.docx`, `.pptx`, `.xlsx`, `.csv`, `.txt`, and `.md` with chunk provenance tracking (source filename, chunk index, unit/page number).
 2. **Session-Isolated Hybrid Retrieval**: In-memory cosine similarity and BM25 token matching providing **sub-millisecond retrieval (0.27ms)** with zero native binary dependencies or compiler lockups.
 3. **Dual-Engine Multimodal LLMs**: Harnesses ultra-fast inference from **Groq** (`openai/gpt-oss-120b`, `openai/gpt-oss-20b`) and **Google Gemini** (`gemini-3.8-flash`, `gemini-3.5-flash-lite`).
-4. **Computer Vision & Diagram Understanding**: Direct image OCR, layout decomposition, and visual reasoning via Groq Vision (`meta-llama/llama-4-scout-17b-16e-instruct`, `qwen/qwen3.8-27b`) and Gemini Vision APIs (`gemini-3.8-flash`).
+4. **Computer Vision & Diagram Understanding**: Direct image OCR, layout decomposition, and visual reasoning via production default **Gemini Vision** (`gemini-3.8-flash`) and optional preview Groq vision (`qwen/qwen3.8-27b`).
 5. **Ultra-Low-Latency Voice Pipeline**: In-browser speech dictation transcribed by **Groq Whisper Large v3 Turbo** (<800ms) and zero-cost local speech synthesis via browser **Web Speech API**.
 6. **No Fabricated Citations**: Answers are backed strictly by ingested documents. If knowledge is missing, OmniMind AI explicitly admits lack of source context.
 7. **Scoped Public Demonstration Mode**: Employs anonymous, browser-scoped session IDs for ephemeral `/tmp` state isolation. No confidential data is stored, and sessions are immediately purged upon clearing.
@@ -62,7 +62,7 @@ flowchart TD
     end
 
     subgraph Providers ["Multimodal Cloud AI Providers"]
-        Groq["Groq Cloud (Llama 3.3 70B & Whisper Large v3)"]
+        Groq["Groq Cloud (OpenAI GPT-OSS 120B & Whisper Large v3)"]
         Gemini["Google Gemini (Gemini 2.0 Flash & Vision)"]
     end
 
@@ -118,7 +118,7 @@ The benchmark evaluates OmniMind AI's `SemanticVectorIndex`—a lightweight, cro
 | Multimodal Vision Reasoning | Voice Dictation (Whisper v3) |
 | :---: | :---: |
 | ![Vision Analysis](docs/screenshots/05_image_understanding.png) | ![Audio Transcription](docs/screenshots/06_audio_transcription.png) |
-| *Groq Llama 3.2 90B & Gemini 2.5 architecture & chart decomposition* | *Groq Whisper Large v3 sub-second transcription* |
+| *Gemini 3.8 Flash production vision & chart decomposition* | *Groq Whisper Large v3 sub-second transcription* |
 
 | Knowledge Document Library | Real-Time Vector Similarity Inspector |
 | :---: | :---: |
@@ -260,7 +260,8 @@ The repository includes a production `render.yaml` blueprint:
 2. Choose **New > Blueprint** and select `render.yaml`.
 3. Add environment secrets in Render Dashboard:
    - `GROQ_API_KEY`: Your Groq Cloud API Key
-   - `GEMINI_API_KEY`: Your Google AI Studio API Key
+   - `GOOGLE_API_KEY`: Your Google AI Studio API Key
+   - `CORS_ORIGINS`: `*` (or your GitHub Pages domain)
 4. Render automatically deploys the FastAPI application with health checks enabled at `/health`.
 
 ### Frontend Deployment (GitHub Pages)
