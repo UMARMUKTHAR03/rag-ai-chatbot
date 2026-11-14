@@ -1,7 +1,7 @@
 import { HealthData, ModelProvider, ChatMessage, UploadedDoc, Citation } from '../types';
 
 const STORAGE_KEY_API_URL = 'omnimind_api_base_url';
-const DEFAULT_API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+const DEFAULT_API_URL = import.meta.env.VITE_API_URL || 'https://omnimind-ai-backend.onrender.com';
 
 export class ApiService {
   private static baseUrl = localStorage.getItem(STORAGE_KEY_API_URL) || DEFAULT_API_URL;

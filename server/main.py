@@ -1,3 +1,11 @@
+import os
+import sys
+
+# Ensure server directory is in sys.path for both uvicorn server.main:app and uvicorn main:app
+server_dir = os.path.dirname(os.path.abspath(__file__))
+if server_dir not in sys.path:
+    sys.path.insert(0, server_dir)
+
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware

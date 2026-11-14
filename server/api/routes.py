@@ -16,7 +16,7 @@ from core.vector_database import (
     find_similar_chunks,
     get_collections_count
 )
-from core.document_processor import save_uploaded_file, validate_uploaded_file
+from core.document_processor import save_uploaded_file, validate_uploaded_file, sanitize_session_id, cleanup_session_files
 from core.multimodal.service import MultimodalService
 from core.llm_chain_factory import generate_rag_response
 from api.schemas import (
@@ -105,6 +105,7 @@ async def upload_documents(
     Indexes chunks into session-isolated vector database.
     """
     try:
+        session_id = sanitize_session_id(session_id)
         model_provider = model_provider.lower()
         processed_files = []
         total_chunks = 0
@@ -143,6 +144,7 @@ async def list_documents(
     session_id: str = Query("default"),
     model_provider: str = Query("gemini")
 ):
+    session_id = sanitize_session_id(session_id)
     store = get_session_vectorstore(session_id=session_id, model_provider=model_provider)
     docs = list(store.documents.values())
     return StandardAPIResponse(
@@ -161,6 +163,7 @@ async def delete_document(
     session_id: str = Query("default"),
     model_provider: str = Query("gemini")
 ):
+    session_id = sanitize_session_id(session_id)
     store = get_session_vectorstore(session_id=session_id, model_provider=model_provider)
     deleted = store.delete_document(document_id)
     if deleted:
@@ -170,19 +173,25 @@ async def delete_document(
 
 @router.delete("/sessions/{session_id}", response_model=StandardAPIResponse)
 async def clear_session(session_id: str):
+    session_id = sanitize_session_id(session_id)
     for prov in ["gemini", "groq"]:
         store = get_session_vectorstore(session_id=session_id, model_provider=prov)
         store.clear()
-    return StandardAPIResponse(status="success", message=f"Session {session_id} data cleared.")
+    cleaned_count = cleanup_session_files(session_id)
+    return StandardAPIResponse(
+        status="success",
+        message=f"Session {session_id} data cleared ({cleaned_count} uploaded files purged)."
+    )
 
 @router.post("/vector_store/search", response_model=StandardAPIResponse)
 @router.post("/retrieval/search", response_model=StandardAPIResponse)
 async def search_vectorstore(request: SearchQueryRequest):
     try:
+        session_id = sanitize_session_id(request.session_id or "default")
         results = find_similar_chunks(
             model_provider=request.model_provider,
             query=request.query,
-            session_id=request.session_id or "default",
+            session_id=session_id,
             top_k=request.top_k
         )
         return StandardAPIResponse(status="success", data=results)
@@ -193,6 +202,7 @@ async def search_vectorstore(request: SearchQueryRequest):
 @router.get("/vector_store/count/{model_provider}", response_model=StandardAPIResponse)
 async def get_vectorstore_count(model_provider: str, session_id: str = Query("default")):
     try:
+        session_id = sanitize_session_id(session_id)
         count = get_collections_count(model_provider, session_id=session_id)
         return StandardAPIResponse(status="success", data=count)
     except Exception as e:
@@ -202,9 +212,10 @@ async def get_vectorstore_count(model_provider: str, session_id: str = Query("de
 @router.post("/chat", response_model=StandardAPIResponse)
 async def chat(request: ChatRequest):
     try:
+        session_id = sanitize_session_id(request.session_id or "default")
         res = generate_rag_response(
             query=request.message,
-            session_id=request.session_id or "default",
+            session_id=session_id,
             model_provider=request.model_provider,
             model_name=request.model_name,
             conversation_history=[m.dict() for m in request.conversation_history] if request.conversation_history else [],
@@ -226,6 +237,8 @@ async def analyze_image_endpoint(
     index_description_for_rag: bool = Form(True)
 ):
     try:
+        session_id = sanitize_session_id(session_id)
+        validate_uploaded_file(image, max_size_mb=20, allowed_category="image")
         content = await image.read()
         mime_type = image.content_type or "image/jpeg"
 
@@ -264,6 +277,8 @@ async def transcribe_audio_endpoint(
     index_transcription_for_rag: bool = Form(True)
 ):
     try:
+        session_id = sanitize_session_id(session_id)
+        validate_uploaded_file(audio, max_size_mb=30, allowed_category="audio")
         content = await audio.read()
         result = MultimodalService.transcribe_audio(
             audio_bytes=content,

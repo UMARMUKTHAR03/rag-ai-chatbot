@@ -49,6 +49,9 @@ jobs:
     name: Frontend Vitest & GitHub Pages Deploy
     runs-on: ubuntu-latest
     needs: backend-tests
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -71,6 +74,8 @@ jobs:
       - name: Build Production Frontend
         working-directory: frontend
         run: npm run build
+        env:
+          VITE_API_URL: https://omnimind-ai-backend.onrender.com
 
       - name: Copy Dist to Root for GitHub Pages
         run: |

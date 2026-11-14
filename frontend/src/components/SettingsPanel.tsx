@@ -43,7 +43,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ health, onRefreshH
             type="text"
             value={apiUrl}
             onChange={(e) => setApiUrl(e.target.value)}
-            placeholder="http://127.0.0.1:8000 or https://omnimind-ai-backend.onrender.com"
+            placeholder="https://omnimind-ai-backend.onrender.com or http://127.0.0.1:8000"
             className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs text-white font-mono focus:outline-none focus:border-emerald-500"
           />
           <button
