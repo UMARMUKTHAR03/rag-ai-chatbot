@@ -121,7 +121,7 @@ export const Header: React.FC<HeaderProps> = ({
                   : 'text-slate-400 hover:text-white'
               }`}
             >
-              Gemini 2.5
+              Gemini 1.5
             </button>
           </div>
 

@@ -67,9 +67,18 @@ class MultimodalService:
             if configured:
                 if test_connectivity:
                     try:
+                        # Direct minimal generation check to ensure model ID is genuinely reachable and active
                         model = MODEL_OPTIONS["gemini"]["chat_models"][0]
-                        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}?key={GOOGLE_API_KEY}"
-                        req = urllib.request.Request(url, headers={"User-Agent": "OmniMind-AI-Backend/2.0"})
+                        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GOOGLE_API_KEY}"
+                        test_payload = json.dumps({
+                            "contents": [{"parts": [{"text": "ping"}]}],
+                            "generationConfig": {"maxOutputTokens": 1}
+                        }).encode("utf-8")
+                        req = urllib.request.Request(
+                            url,
+                            data=test_payload,
+                            headers={"Content-Type": "application/json", "User-Agent": "OmniMind-AI-Backend/2.0"}
+                        )
                         with urllib.request.urlopen(req, timeout=5) as resp:
                             if resp.status == 200:
                                 status = "online"

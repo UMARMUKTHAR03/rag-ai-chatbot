@@ -100,11 +100,11 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ health, onRefreshH
           </div>
 
           <p className="text-xs text-slate-400">
-            Multimodal language & vision reasoning with Gemini 2.0 Flash (256k context window).
+            Multimodal language & vision reasoning with Google Gemini 1.5 Flash.
           </p>
 
           <div className="text-[11px] font-mono text-slate-400 space-y-1">
-            <p>Chat Models: {health?.providers.gemini.chat_models?.join(', ') || 'gemini-2.5-flash'}</p>
+            <p>Chat Models: {health?.providers.gemini.chat_models?.join(', ') || 'gemini-1.5-flash'}</p>
             <p>Vision: Supported (Native Image Analysis)</p>
           </div>
         </div>

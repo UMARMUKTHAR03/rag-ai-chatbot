@@ -98,7 +98,8 @@ def run_live_verification():
     print(f"   Body: {body[:250]}")
     assert "200" in st, f"Chat endpoint failed: {st}"
     chat_resp = json.loads(body)
-    assert chat_resp["model"] == "llama-3.3-70b-versatile"
+    chat_data = chat_resp.get("data") if isinstance(chat_resp.get("data"), dict) else chat_resp
+    assert chat_data.get("model") == "llama-3.3-70b-versatile"
     results["chat_text_gen"] = "PASSED"
 
     # 3. Document Ingestion (TXT document with specific fact)
@@ -135,10 +136,13 @@ def run_live_verification():
     print(f"\n5. Grounded Question Answering & Verified Citations: {st}")
     print(f"   Body: {body[:350]}")
     assert "200" in st, f"RAG chat failed: {st}"
-    rag_resp = json.loads(body)
-    assert "Sarah Chen" in rag_resp["reply"], "Grounded response did not extract the cited entity"
-    assert len(rag_resp["citations"]) >= 1, "Citations list was empty"
-    assert rag_resp["citations"][0]["source"] == "apollo_probe.txt"
+    rag_json = json.loads(body)
+    rag_data = rag_json.get("data") if isinstance(rag_json.get("data"), dict) else rag_json
+    answer_text = rag_data.get("reply") or rag_data.get("answer") or ""
+    citations = rag_data.get("citations") or []
+    assert "Sarah Chen" in answer_text, f"Grounded response did not extract the cited entity: {answer_text}"
+    assert len(citations) >= 1, "Citations list was empty"
+    assert citations[0]["source"] == "apollo_probe.txt"
     results["rag_citations"] = "PASSED"
 
     # 6. Real Computer Vision Analysis via Multipart Form-Data
@@ -164,23 +168,29 @@ def run_live_verification():
     assert "blue" in vision_resp["data"]["description"].lower(), "Vision model failed to correctly describe color"
     results["vision_multipart"] = "PASSED"
 
-    # 7. Real Groq Whisper Audio Transcription with Synthesized Speech Formants
-    wav_buf = io.BytesIO()
-    sample_rate = 16000
-    duration = 1.0
-    n_samples = int(sample_rate * duration)
-    with wave.open(wav_buf, "wb") as w:
-        w.setnchannels(1)
-        w.setsampwidth(2)
-        w.setframerate(sample_rate)
-        frames = bytearray()
-        for i in range(n_samples):
-            t = float(i) / sample_rate
-            freq = 300.0 + 150.0 * math.sin(2.0 * math.pi * 2.0 * t)
-            val = int(14000.0 * math.sin(2.0 * math.pi * freq * t))
-            frames.extend(struct.pack("<h", val))
-        w.writeframes(frames)
-    audio_bytes = wav_buf.getvalue()
+    # 7. Real Groq Whisper Audio Transcription with Intelligible Spoken Speech Sample
+    speech_path = os.path.join(os.path.dirname(__file__), "test_speech.wav")
+    if os.path.exists(speech_path):
+        with open(speech_path, "rb") as f:
+            audio_bytes = f.read()
+    else:
+        # Fallback to synthesizing a clean PCM waveform
+        wav_buf = io.BytesIO()
+        sample_rate = 16000
+        duration = 1.0
+        n_samples = int(sample_rate * duration)
+        with wave.open(wav_buf, "wb") as w:
+            w.setnchannels(1)
+            w.setsampwidth(2)
+            w.setframerate(sample_rate)
+            frames = bytearray()
+            for i in range(n_samples):
+                t = float(i) / sample_rate
+                freq = 300.0 + 150.0 * math.sin(2.0 * math.pi * 2.0 * t)
+                val = int(14000.0 * math.sin(2.0 * math.pi * freq * t))
+                frames.extend(struct.pack("<h", val))
+            w.writeframes(frames)
+        audio_bytes = wav_buf.getvalue()
 
     aud_boundary = "----OmniMindAudioBoundary123"
     aud_body = bytearray()
@@ -195,8 +205,13 @@ def run_live_verification():
     print(f"   Body: {body[:250]}")
     assert "200" in st, f"Audio transcription failed: {st}"
     audio_resp = json.loads(body)
-    assert audio_resp["data"]["model"] == "whisper-large-v3-turbo"
-    assert audio_resp["data"]["duration"] >= 0.5
+    audio_data = audio_resp.get("data") if isinstance(audio_resp.get("data"), dict) else audio_resp
+    assert audio_data.get("model") == "whisper-large-v3-turbo"
+    assert audio_data.get("duration", 0) >= 0.5
+    transcribed_text = audio_data.get("text", "").lower()
+    print(f"   Transcribed Speech Text: '{transcribed_text}'")
+    if os.path.exists(speech_path):
+        assert any(word in transcribed_text for word in ["weather", "what", "like"]), f"Transcription missing expected spoken words: {transcribed_text}"
     results["audio_transcription"] = "PASSED"
 
     # 8. Session Scoped Purge & Cleanup

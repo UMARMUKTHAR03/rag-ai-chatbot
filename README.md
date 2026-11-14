@@ -7,7 +7,7 @@
 [![Vite](https://img.shields.io/badge/Vite-5.4-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
 [![Groq](https://img.shields.io/badge/Groq-Llama_3.3_70B_&_Whisper-F55036?style=for-the-badge)](https://groq.com)
-[![Google Gemini](https://img.shields.io/badge/Google_Gemini-2.5_Flash-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev)
+[![Google Gemini](https://img.shields.io/badge/Google_Gemini-1.5_Flash-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev)
 [![Python Tests](https://img.shields.io/badge/PyTest-13%2F13_Passing-brightgreen?style=for-the-badge&logo=pytest&logoColor=white)](server/tests)
 [![Frontend Tests](https://img.shields.io/badge/Vitest-6%2F6_Passing-brightgreen?style=for-the-badge&logo=vitest&logoColor=white)](frontend/src/test)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
@@ -31,8 +31,8 @@
 Unlike naive RAG systems that suffer from hallucination and opaque citations, OmniMind AI enforces **strict factual grounding**:
 1. **Multi-Format Ingestion**: Ingests `.pdf`, `.docx`, `.pptx`, `.xlsx`, `.csv`, `.txt`, and `.md` with chunk provenance tracking (source filename, chunk index, unit/page number).
 2. **Session-Isolated Hybrid Retrieval**: In-memory cosine similarity and BM25 token matching providing **sub-millisecond retrieval (0.27ms)** with zero native binary dependencies or compiler lockups.
-3. **Dual-Engine Multimodal LLMs**: Harnesses ultra-fast inference from **Groq** (`llama-3.3-70b-versatile`, `llama-3.1-8b-instant`) and **Google Gemini** (`gemini-2.5-flash`).
-4. **Computer Vision & Diagram Understanding**: Direct image OCR, layout decomposition, and visual reasoning via Groq Vision (`llama-3.2-90b-vision-preview`) and Gemini Vision APIs.
+3. **Dual-Engine Multimodal LLMs**: Harnesses ultra-fast inference from **Groq** (`llama-3.3-70b-versatile`, `llama-3.1-8b-instant`) and **Google Gemini** (`gemini-1.5-flash`).
+4. **Computer Vision & Diagram Understanding**: Direct image OCR, layout decomposition, and visual reasoning via Groq Vision (`llama-3.2-11b-vision-preview`) and Gemini Vision APIs.
 5. **Ultra-Low-Latency Voice Pipeline**: In-browser speech dictation transcribed by **Groq Whisper Large v3 Turbo** (<800ms) and zero-cost local speech synthesis via browser **Web Speech API**.
 6. **No Fabricated Citations**: Answers are backed strictly by ingested documents. If knowledge is missing, OmniMind AI explicitly admits lack of source context.
 7. **Scoped Public Demonstration Mode**: Employs anonymous, browser-scoped session IDs for ephemeral `/tmp` state isolation. No confidential data is stored, and sessions are immediately purged upon clearing.

@@ -89,6 +89,7 @@ def generate_rag_response(
     )
 
     return {
+        "reply": llm_output.get("text", ""),
         "answer": llm_output.get("text", ""),
         "model": llm_output.get("model", ""),
         "provider": llm_output.get("provider", model_provider),

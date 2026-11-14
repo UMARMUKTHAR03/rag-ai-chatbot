@@ -20,16 +20,16 @@ MODEL_OPTIONS = {
     "groq": {
         "playground": "https://console.groq.com",
         "chat_models": ["llama-3.3-70b-versatile", "llama-3.1-8b-instant"],
-        "vision_models": ["llama-3.2-90b-vision-preview"],
+        "vision_models": ["llama-3.2-11b-vision-preview"],
         "audio_models": ["whisper-large-v3-turbo"],
         "models": ["llama-3.3-70b-versatile", "llama-3.1-8b-instant"]
     },
     "gemini": {
         "playground": "https://aistudio.google.com",
-        "chat_models": ["gemini-2.5-flash", "gemini-2.5-pro"],
-        "vision_models": ["gemini-2.5-flash", "gemini-2.5-pro"],
+        "chat_models": ["gemini-1.5-flash", "gemini-1.5-pro"],
+        "vision_models": ["gemini-1.5-flash", "gemini-1.5-pro"],
         "audio_models": [],
-        "models": ["gemini-2.5-flash", "gemini-2.5-pro"]
+        "models": ["gemini-1.5-flash", "gemini-1.5-pro"]
     }
 }
 
