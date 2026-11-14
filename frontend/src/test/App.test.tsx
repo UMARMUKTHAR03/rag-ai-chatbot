@@ -154,6 +154,6 @@ describe('OmniMind AI Frontend Component Tests', () => {
     expect(screen.getByText('Backend API Endpoint')).toBeInTheDocument();
     expect(screen.getByText('Google Gemini')).toBeInTheDocument();
     expect(screen.getByText('Groq Cloud')).toBeInTheDocument();
-    expect(screen.getByText(/Privacy & Session Isolation Architecture/i)).toBeInTheDocument();
+    expect(screen.getByText(/Session Scoping & Data Retention Notice/i)).toBeInTheDocument();
   });
 });

@@ -9,7 +9,7 @@ import { ApiService } from './services/api';
 
 export function App() {
   const [activeTab, setActiveTab] = useState<'chat' | 'library' | 'inspector' | 'settings'>('chat');
-  const [provider, setProvider] = useState<ModelProvider>('gemini');
+  const [provider, setProvider] = useState<ModelProvider>('groq');
   const [health, setHealth] = useState<HealthData | null>(null);
   const [docs, setDocs] = useState<UploadedDoc[]>([]);
   const [sessionId] = useState<string>(() => {
@@ -25,6 +25,12 @@ export function App() {
     try {
       const data = await ApiService.getHealth();
       setHealth(data);
+      // Auto-select configured provider if available
+      if (data?.providers?.groq?.configured && !data?.providers?.gemini?.configured) {
+        setProvider('groq');
+      } else if (data?.providers?.gemini?.configured && !data?.providers?.groq?.configured) {
+        setProvider('gemini');
+      }
     } catch {
       setHealth({
         app_name: 'OmniMind AI',

@@ -138,13 +138,16 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ health, onRefreshH
         </div>
       </div>
 
-      {/* Security Notice */}
+      {/* Security & Data Scope Notice */}
       <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 flex items-start gap-3 text-xs text-slate-400">
         <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
-        <div>
-          <span className="font-semibold text-slate-300">Privacy & Session Isolation Architecture:</span>
-          <p className="mt-0.5 text-slate-400">
-            Uploaded files and vector indices are isolated per browser session ID. No raw documents are committed to version control, and API keys are stored exclusively as server-side environment variables on the backend.
+        <div className="space-y-1">
+          <span className="font-semibold text-slate-300">Session Scoping & Data Retention Notice:</span>
+          <p className="text-slate-400 leading-relaxed">
+            Uploaded files and vector indices are scoped per active browser session ID. Temporary document chunks and session vectors are stored in ephemeral server storage (<code className="text-emerald-400">/tmp</code>) and are deleted when the session is cleared or during backend hibernation.
+          </p>
+          <p className="text-slate-400 leading-relaxed">
+            OmniMind AI operates in public demonstration mode without persistent user authentication or cryptographic session authorization. Do not upload confidential, sensitive, or personally identifiable data.
           </p>
         </div>
       </div>
