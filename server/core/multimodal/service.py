@@ -28,12 +28,20 @@ class MultimodalService:
             if configured:
                 if test_connectivity:
                     try:
-                        # Quick probe using official models endpoint
-                        url = "https://api.groq.com/openai/v1/models"
+                        # Genuine minimal chat completion request to verify configured model availability
+                        probe_model = MODEL_OPTIONS["groq"]["chat_models"][0]
+                        url = "https://api.groq.com/openai/v1/chat/completions"
+                        probe_payload = json.dumps({
+                            "model": probe_model,
+                            "messages": [{"role": "user", "content": "ping"}],
+                            "max_tokens": 1
+                        }).encode("utf-8")
                         req = urllib.request.Request(
                             url,
+                            data=probe_payload,
                             headers={
                                 "Authorization": f"Bearer {GROQ_API_KEY}",
+                                "Content-Type": "application/json",
                                 "User-Agent": "OmniMind-AI-Backend/2.0"
                             }
                         )
@@ -42,6 +50,32 @@ class MultimodalService:
                                 status = "online"
                             else:
                                 status = "degraded"
+                    except urllib.error.HTTPError as e:
+                        # If the primary model encounters account permissions, try the fallback model
+                        try:
+                            fallback_model = MODEL_OPTIONS["groq"]["chat_models"][1]
+                            probe_payload = json.dumps({
+                                "model": fallback_model,
+                                "messages": [{"role": "user", "content": "ping"}],
+                                "max_tokens": 1
+                            }).encode("utf-8")
+                            req = urllib.request.Request(
+                                url,
+                                data=probe_payload,
+                                headers={
+                                    "Authorization": f"Bearer {GROQ_API_KEY}",
+                                    "Content-Type": "application/json",
+                                    "User-Agent": "OmniMind-AI-Backend/2.0"
+                                }
+                            )
+                            with urllib.request.urlopen(req, timeout=5) as resp:
+                                if resp.status == 200:
+                                    status = "online"
+                                else:
+                                    status = "degraded"
+                        except Exception as inner_e:
+                            status = "unreachable"
+                            error = str(inner_e)
                     except Exception as e:
                         status = "unreachable"
                         error = str(e)
@@ -84,6 +118,24 @@ class MultimodalService:
                                 status = "online"
                             else:
                                 status = "degraded"
+                    except urllib.error.HTTPError as e:
+                        # If primary model is unavailable or capacity exhausted, try fallback stable model
+                        try:
+                            fallback_model = MODEL_OPTIONS["gemini"]["chat_models"][1]
+                            url = f"https://generativelanguage.googleapis.com/v1beta/models/{fallback_model}:generateContent?key={GOOGLE_API_KEY}"
+                            req = urllib.request.Request(
+                                url,
+                                data=test_payload,
+                                headers={"Content-Type": "application/json", "User-Agent": "OmniMind-AI-Backend/2.0"}
+                            )
+                            with urllib.request.urlopen(req, timeout=5) as resp:
+                                if resp.status == 200:
+                                    status = "online"
+                                else:
+                                    status = "degraded"
+                        except Exception as inner_e:
+                            status = "unreachable"
+                            error = str(inner_e)
                     except Exception as e:
                         status = "unreachable"
                         error = str(e)
