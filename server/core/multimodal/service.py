@@ -495,10 +495,21 @@ class MultimodalService:
         body.extend(b'Content-Disposition: form-data; name="response_format"\r\n\r\n')
         body.extend(b"verbose_json\r\n")
 
+        # Detect appropriate content type from filename extension
+        ext = os.path.splitext(filename.lower())[1]
+        content_type_map = {
+            ".wav": "audio/wav",
+            ".mp3": "audio/mpeg",
+            ".m4a": "audio/mp4",
+            ".ogg": "audio/ogg",
+            ".webm": "audio/webm"
+        }
+        audio_content_type = content_type_map.get(ext, "audio/webm")
+
         # file field
         body.extend(f"--{boundary}\r\n".encode("utf-8"))
         body.extend(f'Content-Disposition: form-data; name="file"; filename="{filename}"\r\n'.encode("utf-8"))
-        body.extend(b"Content-Type: application/octet-stream\r\n\r\n")
+        body.extend(f"Content-Type: {audio_content_type}\r\n\r\n".encode("utf-8"))
         body.extend(audio_bytes)
         body.extend(b"\r\n")
 
@@ -509,7 +520,8 @@ class MultimodalService:
             data=bytes(body),
             headers={
                 "Authorization": f"Bearer {GROQ_API_KEY}",
-                "Content-Type": f"multipart/form-data; boundary={boundary}"
+                "Content-Type": f"multipart/form-data; boundary={boundary}",
+                "User-Agent": "OmniMind-AI-Backend/2.0"
             }
         )
 

@@ -18,9 +18,9 @@
 
 - **Interactive Web Client (GitHub Pages)**: [https://umarmukthar03.github.io/rag-ai-chatbot/](https://umarmukthar03.github.io/rag-ai-chatbot/)  
   *(Target new repository location once renamed: `https://umarmukthar03.github.io/omnimind-multimodal-ai/`)*
-- **High-Performance FastAPI Backend (Render)**: [https://omnimind-ai-backend.onrender.com](https://omnimind-ai-backend.onrender.com)
-- **API Swagger Documentation**: [https://omnimind-ai-backend.onrender.com/docs](https://omnimind-ai-backend.onrender.com/docs)
-- **OpenAPI JSON Specification**: [https://omnimind-ai-backend.onrender.com/openapi.json](https://omnimind-ai-backend.onrender.com/openapi.json)
+- **High-Performance FastAPI Backend (Render)**: [https://omnimind-ai-backend-bgzb.onrender.com](https://omnimind-ai-backend-bgzb.onrender.com)
+- **API Swagger Documentation**: [https://omnimind-ai-backend-bgzb.onrender.com/docs](https://omnimind-ai-backend-bgzb.onrender.com/docs)
+- **OpenAPI JSON Specification**: [https://omnimind-ai-backend-bgzb.onrender.com/openapi.json](https://omnimind-ai-backend-bgzb.onrender.com/openapi.json)
 
 ---
 

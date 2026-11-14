@@ -142,25 +142,56 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
+
+      // Detect browser-supported recording MIME type
+      let mimeType = 'audio/webm;codecs=opus';
+      let extension = 'webm';
+
+      if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+        mimeType = 'audio/webm;codecs=opus';
+        extension = 'webm';
+      } else if (MediaRecorder.isTypeSupported('audio/webm')) {
+        mimeType = 'audio/webm';
+        extension = 'webm';
+      } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+        mimeType = 'audio/mp4';
+        extension = 'm4a';
+      } else if (MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')) {
+        mimeType = 'audio/ogg;codecs=opus';
+        extension = 'ogg';
+      } else if (MediaRecorder.isTypeSupported('audio/wav')) {
+        mimeType = 'audio/wav';
+        extension = 'wav';
+      }
+
+      const mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
 
       mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
+        if (event.data && event.data.size > 0) {
           audioChunksRef.current.push(event.data);
         }
       };
 
       mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
+        const actualMime = mediaRecorder.mimeType || mimeType || 'audio/webm';
+        const audioBlob = new Blob(audioChunksRef.current, { type: actualMime });
         stream.getTracks().forEach((track) => track.stop());
+
+        if (audioBlob.size === 0) {
+          alert('Recorded audio was empty. Please check your microphone.');
+          return;
+        }
 
         try {
           setIsLoading(true);
-          const res = await ApiService.transcribeAudio(audioBlob, 'microphone_voice.wav', 'groq', sessionId);
-          if (res.text) {
+          const recordingFilename = `microphone_recording.${extension}`;
+          const res = await ApiService.transcribeAudio(audioBlob, recordingFilename, 'groq', sessionId);
+          if (res && res.text) {
             setInput((prev) => (prev ? `${prev} ${res.text}` : res.text));
+          } else {
+            alert('No speech could be recognized in the recording.');
           }
         } catch (err: any) {
           alert(`Speech transcription failed: ${err.message}`);
@@ -169,7 +200,7 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
         }
       };
 
-      mediaRecorder.start();
+      mediaRecorder.start(250);
       setIsRecording(true);
     } catch (err: any) {
       alert(`Could not access microphone: ${err.message}`);

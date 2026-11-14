@@ -1,10 +1,24 @@
 import { HealthData, ModelProvider, ChatMessage, UploadedDoc, Citation } from '../types';
 
 const STORAGE_KEY_API_URL = 'omnimind_api_base_url';
-const DEFAULT_API_URL = import.meta.env.VITE_API_URL || 'https://omnimind-ai-backend.onrender.com';
+export const PRODUCTION_RENDER_API_URL = 'https://omnimind-ai-backend-bgzb.onrender.com';
+const LEGACY_RENDER_API_URL = 'https://omnimind-ai-backend.onrender.com';
+
+function getInitialApiUrl(): string {
+  const envUrl = import.meta.env.VITE_API_URL;
+  const storedUrl = localStorage.getItem(STORAGE_KEY_API_URL);
+
+  // Automatically migrate legacy or unassigned Render URLs to confirmed production endpoint
+  if (!storedUrl || storedUrl.includes('omnimind-ai-backend.onrender.com')) {
+    const targetUrl = envUrl || PRODUCTION_RENDER_API_URL;
+    localStorage.setItem(STORAGE_KEY_API_URL, targetUrl);
+    return targetUrl;
+  }
+  return storedUrl;
+}
 
 export class ApiService {
-  private static baseUrl = localStorage.getItem(STORAGE_KEY_API_URL) || DEFAULT_API_URL;
+  private static baseUrl = getInitialApiUrl();
 
   public static getBaseUrl(): string {
     return this.baseUrl;
@@ -17,16 +31,25 @@ export class ApiService {
 
   public static async getHealth(): Promise<HealthData> {
     const res = await fetch(`${this.baseUrl}/health`);
-    if (!res.ok) throw new Error(`Health check failed with HTTP ${res.status}`);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ message: res.statusText }));
+      throw new Error(err.message || `Health check failed with HTTP ${res.status}`);
+    }
     const json = await res.json();
+    if (!json || !json.data) {
+      throw new Error('Received invalid or null response data from backend health check');
+    }
     return json.data;
   }
 
   public static async getModels(): Promise<any> {
     const res = await fetch(`${this.baseUrl}/models`);
-    if (!res.ok) throw new Error(`Failed to fetch models with HTTP ${res.status}`);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ message: res.statusText }));
+      throw new Error(err.message || `Failed to fetch models with HTTP ${res.status}`);
+    }
     const json = await res.json();
-    return json.data;
+    return json?.data || {};
   }
 
   public static async uploadDocuments(
@@ -133,7 +156,7 @@ export class ApiService {
 
   public static async transcribeAudio(
     audioFile: File | Blob,
-    filename: string = 'recording.wav',
+    filename: string = 'recording.webm',
     provider: ModelProvider = 'groq',
     sessionId: string = 'default'
   ): Promise<{ text: string; duration: number; model: string }> {
@@ -150,10 +173,13 @@ export class ApiService {
 
     if (!res.ok) {
       const err = await res.json().catch(() => ({ message: res.statusText }));
-      throw new Error(err.message || 'Audio transcription failed');
+      throw new Error(err.message || `Audio transcription failed with HTTP ${res.status}`);
     }
 
     const json = await res.json();
+    if (!json || !json.data || typeof json.data.text === 'undefined') {
+      throw new Error(json?.message || 'Invalid transcription response from server');
+    }
     return json.data;
   }
 

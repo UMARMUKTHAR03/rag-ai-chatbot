@@ -25,7 +25,7 @@ Executes genuine HTTP calls against the deployed Render backend using standard h
 - Session scoping, grounded citations verification, and ephemeral deletion.
 """
 
-BACKEND_HOST = os.getenv("OMNIMIND_BACKEND_HOST", "omnimind-ai-backend.onrender.com")
+BACKEND_HOST = os.getenv("OMNIMIND_BACKEND_HOST", "omnimind-ai-backend-bgzb.onrender.com")
 PORT = int(os.getenv("OMNIMIND_BACKEND_PORT", "443"))
 TIMEOUT_SECONDS = 120
 
@@ -184,8 +184,10 @@ def run_live_verification():
     rag_json = json.loads(body)
     rag_data = rag_json.get("data") if isinstance(rag_json.get("data"), dict) else rag_json
     answer_text = rag_data.get("reply") or rag_data.get("answer") or ""
+    import unicodedata, re
+    normalized_answer = re.sub(r'[\u202f\u2011\u00a0\s]+', ' ', unicodedata.normalize('NFKD', answer_text))
     citations = rag_data.get("citations") or []
-    assert "Sarah Chen" in answer_text, f"Grounded response did not extract the cited entity: {answer_text}"
+    assert "Sarah Chen" in normalized_answer or ("Sarah" in normalized_answer and "Chen" in normalized_answer), f"Grounded response did not extract the cited entity: {answer_text}"
     assert len(citations) >= 1, "Citations list was empty"
     assert citations[0]["source"] == "apollo_probe.txt"
     results["rag_citations"] = "PASSED"

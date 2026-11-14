@@ -43,7 +43,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ health, onRefreshH
             type="text"
             value={apiUrl}
             onChange={(e) => setApiUrl(e.target.value)}
-            placeholder="https://omnimind-ai-backend.onrender.com or http://127.0.0.1:8000"
+            placeholder="https://omnimind-ai-backend-bgzb.onrender.com or http://127.0.0.1:8000"
             className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs text-white font-mono focus:outline-none focus:border-emerald-500"
           />
           <button
@@ -68,13 +68,13 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ health, onRefreshH
           </button>
           <button
             onClick={() => {
-              setApiUrl('https://omnimind-ai-backend.onrender.com');
-              ApiService.setBaseUrl('https://omnimind-ai-backend.onrender.com');
+              setApiUrl('https://omnimind-ai-backend-bgzb.onrender.com');
+              ApiService.setBaseUrl('https://omnimind-ai-backend-bgzb.onrender.com');
               onRefreshHealth();
             }}
             className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300"
           >
-            Production Render: https://omnimind-ai-backend.onrender.com
+            Production Render: https://omnimind-ai-backend-bgzb.onrender.com
           </button>
         </div>
       </div>

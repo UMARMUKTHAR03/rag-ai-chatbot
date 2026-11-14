@@ -304,9 +304,12 @@ async def transcribe_audio_endpoint(
             store.add_chunks(document_id=doc_id, filename=audio.filename, chunks=[chunk])
 
         return StandardAPIResponse(status="success", data=result)
+    except ValueError as ve:
+        logger.warning(f"Validation error during audio transcription: {ve}")
+        raise HTTPException(status_code=400, detail=str(ve))
     except Exception as e:
         logger.exception("Error during audio transcription")
-        return StandardAPIResponse(status="error", message=str(e))
+        raise HTTPException(status_code=500, detail=f"Audio transcription failed: {str(e)}")
 
 @router.post("/audio/synthesize", response_model=StandardAPIResponse)
 async def synthesize_speech_endpoint(request: SynthesizeSpeechRequest):
