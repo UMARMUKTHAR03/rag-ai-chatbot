@@ -20,12 +20,16 @@ class ChatMessage(BaseModel):
 class ChatRequest(BaseModel):
     message: str
     model_name: Optional[str] = None
-    model_provider: str = "gemini"
+    model_provider: Optional[str] = None
+    provider: Optional[str] = None
     session_id: Optional[str] = "default"
     conversation_history: Optional[List[ChatMessage]] = Field(default_factory=list)
     temperature: float = 0.7
     max_tokens: int = 1024
     use_rag: bool = True
+
+    def get_effective_provider(self) -> str:
+        return (self.model_provider or self.provider or "groq").lower()
 
 class DocumentMetadata(BaseModel):
     document_id: str

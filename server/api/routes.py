@@ -31,9 +31,9 @@ from utils.logger import logger
 router = APIRouter()
 
 @router.get("/health", response_model=StandardAPIResponse)
-def health_check():
-    groq_health = MultimodalService.check_provider_health("groq")
-    gemini_health = MultimodalService.check_provider_health("gemini")
+def health_check(probe_reachability: bool = Query(False)):
+    groq_health = MultimodalService.check_provider_health("groq", test_connectivity=probe_reachability)
+    gemini_health = MultimodalService.check_provider_health("gemini", test_connectivity=probe_reachability)
 
     return StandardAPIResponse(
         status="success",
@@ -213,10 +213,11 @@ async def get_vectorstore_count(model_provider: str, session_id: str = Query("de
 async def chat(request: ChatRequest):
     try:
         session_id = sanitize_session_id(request.session_id or "default")
+        provider = request.get_effective_provider()
         res = generate_rag_response(
             query=request.message,
             session_id=session_id,
-            model_provider=request.model_provider,
+            model_provider=provider,
             model_name=request.model_name,
             conversation_history=[m.dict() for m in request.conversation_history] if request.conversation_history else [],
             temperature=request.temperature,

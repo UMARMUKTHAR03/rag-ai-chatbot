@@ -19,28 +19,79 @@ class MultimodalService:
         return MODEL_OPTIONS
 
     @staticmethod
-    def check_provider_health(provider: str) -> Dict[str, Any]:
+    def check_provider_health(provider: str, test_connectivity: bool = False) -> Dict[str, Any]:
         provider = provider.lower()
         if provider == "groq":
             configured = bool(GROQ_API_KEY)
-            return {
+            status = "unconfigured"
+            error = None
+            if configured:
+                if test_connectivity:
+                    try:
+                        # Quick probe using official models endpoint
+                        url = "https://api.groq.com/openai/v1/models"
+                        req = urllib.request.Request(
+                            url,
+                            headers={
+                                "Authorization": f"Bearer {GROQ_API_KEY}",
+                                "User-Agent": "OmniMind-AI-Backend/2.0"
+                            }
+                        )
+                        with urllib.request.urlopen(req, timeout=5) as resp:
+                            if resp.status == 200:
+                                status = "online"
+                            else:
+                                status = "degraded"
+                    except Exception as e:
+                        status = "unreachable"
+                        error = str(e)
+                else:
+                    status = "configured"
+
+            res = {
                 "provider": "Groq Cloud",
                 "configured": configured,
-                "status": "online" if configured else "unconfigured",
+                "status": status,
                 "chat_models": MODEL_OPTIONS["groq"]["chat_models"],
                 "vision_models": MODEL_OPTIONS["groq"]["vision_models"],
                 "audio_models": MODEL_OPTIONS["groq"]["audio_models"]
             }
+            if error:
+                res["error"] = error
+            return res
+
         elif provider == "gemini":
             configured = bool(GOOGLE_API_KEY)
-            return {
+            status = "unconfigured"
+            error = None
+            if configured:
+                if test_connectivity:
+                    try:
+                        model = MODEL_OPTIONS["gemini"]["chat_models"][0]
+                        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}?key={GOOGLE_API_KEY}"
+                        req = urllib.request.Request(url, headers={"User-Agent": "OmniMind-AI-Backend/2.0"})
+                        with urllib.request.urlopen(req, timeout=5) as resp:
+                            if resp.status == 200:
+                                status = "online"
+                            else:
+                                status = "degraded"
+                    except Exception as e:
+                        status = "unreachable"
+                        error = str(e)
+                else:
+                    status = "configured"
+
+            res = {
                 "provider": "Google Gemini",
                 "configured": configured,
-                "status": "online" if configured else "unconfigured",
+                "status": status,
                 "chat_models": MODEL_OPTIONS["gemini"]["chat_models"],
                 "vision_models": MODEL_OPTIONS["gemini"]["vision_models"],
                 "audio_models": MODEL_OPTIONS["gemini"]["audio_models"]
             }
+            if error:
+                res["error"] = error
+            return res
         else:
             return {
                 "provider": provider,
