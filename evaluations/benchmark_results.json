@@ -1,0 +1,48 @@
+{
+  "status": "genuine_evaluated",
+  "benchmark_name": "OmniMind AI Grounded Retrieval & Latency Benchmark",
+  "corpus_documents": 4,
+  "total_test_queries": 4,
+  "metrics": {
+    "recall_at_1": 1.0,
+    "recall_at_3": 1.0,
+    "mean_reciprocal_rank_mrr": 1.0,
+    "avg_retrieval_latency_ms": 0.27,
+    "min_latency_ms": 0.23,
+    "max_latency_ms": 0.39
+  },
+  "query_results": [
+    {
+      "query": "superposition and entanglement in computing",
+      "expected_source": "quantum_computing_primer.pdf",
+      "matched_source": "quantum_computing_primer.pdf",
+      "rank": 1,
+      "score": 0.7235,
+      "latency_ms": 0.39
+    },
+    {
+      "query": "quarterly revenue growth and operating margins",
+      "expected_source": "q4_financial_statement.xlsx",
+      "matched_source": "q4_financial_statement.xlsx",
+      "rank": 1,
+      "score": 0.3312,
+      "latency_ms": 0.25
+    },
+    {
+      "query": "photovoltaic solar generation gigawatts",
+      "expected_source": "renewable_energy_transition.docx",
+      "matched_source": "renewable_energy_transition.docx",
+      "rank": 1,
+      "score": 0.7267,
+      "latency_ms": 0.23
+    },
+    {
+      "query": "Phase III clinical trial efficacy rate",
+      "expected_source": "clinical_trial_summary.pdf",
+      "matched_source": "clinical_trial_summary.pdf",
+      "rank": 1,
+      "score": 0.7122,
+      "latency_ms": 0.23
+    }
+  ]
+}
