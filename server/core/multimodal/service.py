@@ -162,6 +162,23 @@ class MultimodalService:
             }
 
     @staticmethod
+    def _is_transient_or_capacity_error(http_code: int, err_text: str) -> bool:
+        """
+        Identifies transient rate limits, capacity exhaustion, model-not-found/unsupported,
+        or gateway/server timeouts. Never treats 401/403 auth errors or 422 malformed schema as fallbackable.
+        """
+        if http_code in (404, 429, 500, 502, 503, 504):
+            return True
+        if http_code == 400:
+            err_lower = err_text.lower()
+            if any(term in err_lower for term in [
+                "does not exist", "not have access", "unsupported model",
+                "model_capacity_exhausted", "capacity_exhausted", "overloaded", "quota"
+            ]):
+                return True
+        return False
+
+    @staticmethod
     def chat_completion(
         messages: List[Dict[str, Any]],
         provider: str = "gemini",
@@ -175,48 +192,60 @@ class MultimodalService:
             if not GROQ_API_KEY:
                 raise ValueError("GROQ_API_KEY is not configured on the backend server.")
 
-            selected_model = model or MODEL_OPTIONS["groq"]["chat_models"][0]
-            url = "https://api.groq.com/openai/v1/chat/completions"
+            models_to_try = [model] if model else list(MODEL_OPTIONS["groq"]["chat_models"])
+            last_err = None
 
-            payload = {
-                "model": selected_model,
-                "messages": messages,
-                "temperature": max(0.0, min(temperature, 1.5)),
-                "max_tokens": max_tokens
-            }
-
-            req = urllib.request.Request(
-                url,
-                data=json.dumps(payload).encode("utf-8"),
-                headers={
-                    "Authorization": f"Bearer {GROQ_API_KEY}",
-                    "Content-Type": "application/json",
-                    "User-Agent": "OmniMind-AI-Backend/2.0"
+            for attempt_idx, selected_model in enumerate(models_to_try):
+                url = "https://api.groq.com/openai/v1/chat/completions"
+                payload = {
+                    "model": selected_model,
+                    "messages": messages,
+                    "temperature": max(0.0, min(temperature, 1.5)),
+                    "max_tokens": max_tokens
                 }
-            )
 
-            try:
-                with urllib.request.urlopen(req, timeout=30) as resp:
-                    res_json = json.loads(resp.read().decode("utf-8"))
-                    text = res_json["choices"][0]["message"]["content"]
-                    usage = res_json.get("usage", {})
-                    return {
-                        "text": text,
-                        "model": selected_model,
-                        "provider": "groq",
-                        "usage": usage
+                req = urllib.request.Request(
+                    url,
+                    data=json.dumps(payload).encode("utf-8"),
+                    headers={
+                        "Authorization": f"Bearer {GROQ_API_KEY}",
+                        "Content-Type": "application/json",
+                        "User-Agent": "OmniMind-AI-Backend/2.0"
                     }
-            except urllib.error.HTTPError as e:
-                err = e.read().decode("utf-8", errors="replace")
-                logger.error(f"Groq API HTTP Error {e.code}: {err}")
-                raise RuntimeError(f"Groq API Error ({e.code}): {err}")
+                )
+
+                try:
+                    with urllib.request.urlopen(req, timeout=30) as resp:
+                        res_json = json.loads(resp.read().decode("utf-8"))
+                        text = res_json["choices"][0]["message"]["content"]
+                        usage = res_json.get("usage", {})
+                        return {
+                            "text": text,
+                            "model": selected_model,
+                            "provider": "groq",
+                            "usage": usage
+                        }
+                except urllib.error.HTTPError as e:
+                    err = e.read().decode("utf-8", errors="replace")
+                    logger.warning(f"Groq API HTTP Error {e.code} on model {selected_model}: {err}")
+                    last_err = RuntimeError(f"Groq API Error ({e.code}): {err}")
+                    if attempt_idx < len(models_to_try) - 1 and MultimodalService._is_transient_or_capacity_error(e.code, err):
+                        logger.info(f"Attempting Groq runtime fallback from {selected_model} to {models_to_try[attempt_idx + 1]}")
+                        continue
+                    raise last_err
+                except Exception as e:
+                    logger.warning(f"Groq API connection error on model {selected_model}: {e}")
+                    last_err = e
+                    if attempt_idx < len(models_to_try) - 1:
+                        continue
+                    raise last_err
 
         elif provider == "gemini":
             if not GOOGLE_API_KEY:
                 raise ValueError("GOOGLE_API_KEY is not configured on the backend server.")
 
-            selected_model = model or MODEL_OPTIONS["gemini"]["chat_models"][0]
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/{selected_model}:generateContent?key={GOOGLE_API_KEY}"
+            models_to_try = [model] if model else list(MODEL_OPTIONS["gemini"]["chat_models"])
+            last_err = None
 
             # Convert standard messages to Gemini contents structure
             contents = []
@@ -242,32 +271,44 @@ class MultimodalService:
             if system_instruction:
                 payload["systemInstruction"] = system_instruction
 
-            req = urllib.request.Request(
-                url,
-                data=json.dumps(payload).encode("utf-8"),
-                headers={
-                    "Content-Type": "application/json",
-                    "User-Agent": "OmniMind-AI-Backend/2.0"
-                }
-            )
-
-            try:
-                with urllib.request.urlopen(req, timeout=30) as resp:
-                    res_json = json.loads(resp.read().decode("utf-8"))
-                    candidates = res_json.get("candidates", [])
-                    if not candidates:
-                        raise ValueError("Gemini returned empty candidate choices.")
-                    text = candidates[0].get("content", {}).get("parts", [{}])[0].get("text", "")
-                    return {
-                        "text": text,
-                        "model": selected_model,
-                        "provider": "gemini",
-                        "usage": res_json.get("usageMetadata", {})
+            for attempt_idx, selected_model in enumerate(models_to_try):
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/{selected_model}:generateContent?key={GOOGLE_API_KEY}"
+                req = urllib.request.Request(
+                    url,
+                    data=json.dumps(payload).encode("utf-8"),
+                    headers={
+                        "Content-Type": "application/json",
+                        "User-Agent": "OmniMind-AI-Backend/2.0"
                     }
-            except urllib.error.HTTPError as e:
-                err = e.read().decode("utf-8", errors="replace")
-                logger.error(f"Gemini API HTTP Error {e.code}: {err}")
-                raise RuntimeError(f"Google Gemini API Error ({e.code}): {err}")
+                )
+
+                try:
+                    with urllib.request.urlopen(req, timeout=30) as resp:
+                        res_json = json.loads(resp.read().decode("utf-8"))
+                        candidates = res_json.get("candidates", [])
+                        if not candidates:
+                            raise ValueError("Gemini returned empty candidate choices.")
+                        text = candidates[0].get("content", {}).get("parts", [{}])[0].get("text", "")
+                        return {
+                            "text": text,
+                            "model": selected_model,
+                            "provider": "gemini",
+                            "usage": res_json.get("usageMetadata", {})
+                        }
+                except urllib.error.HTTPError as e:
+                    err = e.read().decode("utf-8", errors="replace")
+                    logger.warning(f"Gemini API HTTP Error {e.code} on model {selected_model}: {err}")
+                    last_err = RuntimeError(f"Google Gemini API Error ({e.code}): {err}")
+                    if attempt_idx < len(models_to_try) - 1 and MultimodalService._is_transient_or_capacity_error(e.code, err):
+                        logger.info(f"Attempting Gemini runtime fallback from {selected_model} to {models_to_try[attempt_idx + 1]}")
+                        continue
+                    raise last_err
+                except Exception as e:
+                    logger.warning(f"Gemini API connection error on model {selected_model}: {e}")
+                    last_err = e
+                    if attempt_idx < len(models_to_try) - 1:
+                        continue
+                    raise last_err
 
         else:
             raise ValueError(f"Unsupported model provider: {provider}")
@@ -287,88 +328,124 @@ class MultimodalService:
             if not GOOGLE_API_KEY:
                 raise ValueError("GOOGLE_API_KEY is not configured on the backend server.")
 
-            selected_model = model or MODEL_OPTIONS["gemini"]["vision_models"][0]
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/{selected_model}:generateContent?key={GOOGLE_API_KEY}"
+            models_to_try = [model] if model else list(MODEL_OPTIONS["gemini"]["vision_models"])
+            last_err = None
 
-            payload = {
-                "contents": [
-                    {
-                        "role": "user",
-                        "parts": [
-                            {"text": prompt},
-                            {
-                                "inlineData": {
-                                    "mimeType": mime_type,
-                                    "data": b64_image
+            for attempt_idx, selected_model in enumerate(models_to_try):
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/{selected_model}:generateContent?key={GOOGLE_API_KEY}"
+
+                payload = {
+                    "contents": [
+                        {
+                            "role": "user",
+                            "parts": [
+                                {"text": prompt},
+                                {
+                                    "inlineData": {
+                                        "mimeType": mime_type,
+                                        "data": b64_image
+                                    }
                                 }
-                            }
-                        ]
+                            ]
+                        }
+                    ],
+                    "generationConfig": {
+                        "temperature": 0.4,
+                        "maxOutputTokens": 1024
                     }
-                ],
-                "generationConfig": {
-                    "temperature": 0.4,
-                    "maxOutputTokens": 1024
                 }
-            }
 
-            req = urllib.request.Request(
-                url,
-                data=json.dumps(payload).encode("utf-8"),
-                headers={"Content-Type": "application/json"}
-            )
+                req = urllib.request.Request(
+                    url,
+                    data=json.dumps(payload).encode("utf-8"),
+                    headers={"Content-Type": "application/json", "User-Agent": "OmniMind-AI-Backend/2.0"}
+                )
 
-            with urllib.request.urlopen(req, timeout=40) as resp:
-                res_json = json.loads(resp.read().decode("utf-8"))
-                text = res_json["candidates"][0]["content"]["parts"][0]["text"]
-                return {
-                    "description": text,
-                    "provider": "gemini",
-                    "model": selected_model,
-                    "mime_type": mime_type
-                }
+                try:
+                    with urllib.request.urlopen(req, timeout=40) as resp:
+                        res_json = json.loads(resp.read().decode("utf-8"))
+                        text = res_json["candidates"][0]["content"]["parts"][0]["text"]
+                        return {
+                            "description": text,
+                            "provider": "gemini",
+                            "model": selected_model,
+                            "mime_type": mime_type
+                        }
+                except urllib.error.HTTPError as e:
+                    err = e.read().decode("utf-8", errors="replace")
+                    logger.warning(f"Gemini Vision HTTP Error {e.code} on model {selected_model}: {err}")
+                    last_err = RuntimeError(f"Google Gemini Vision Error ({e.code}): {err}")
+                    if attempt_idx < len(models_to_try) - 1 and MultimodalService._is_transient_or_capacity_error(e.code, err):
+                        logger.info(f"Attempting Gemini vision fallback from {selected_model} to {models_to_try[attempt_idx + 1]}")
+                        continue
+                    raise last_err
+                except Exception as e:
+                    logger.warning(f"Gemini Vision connection error on model {selected_model}: {e}")
+                    last_err = e
+                    if attempt_idx < len(models_to_try) - 1:
+                        continue
+                    raise last_err
 
         elif provider == "groq":
             if not GROQ_API_KEY:
                 raise ValueError("GROQ_API_KEY is not configured on the backend server.")
 
-            selected_model = model or MODEL_OPTIONS["groq"]["vision_models"][0]
-            url = "https://api.groq.com/openai/v1/chat/completions"
-
+            models_to_try = [model] if model else list(MODEL_OPTIONS["groq"]["vision_models"])
+            last_err = None
             data_url = f"data:{mime_type};base64,{b64_image}"
-            messages = [
-                {
-                    "role": "user",
-                    "content": [
-                        {"type": "text", "text": prompt},
-                        {"type": "image_url", "image_url": {"url": data_url}}
-                    ]
-                }
-            ]
 
-            payload = {
-                "model": selected_model,
-                "messages": messages,
-                "max_tokens": 1024
-            }
+            for attempt_idx, selected_model in enumerate(models_to_try):
+                url = "https://api.groq.com/openai/v1/chat/completions"
+                messages = [
+                    {
+                        "role": "user",
+                        "content": [
+                            {"type": "text", "text": prompt},
+                            {"type": "image_url", "image_url": {"url": data_url}}
+                        ]
+                    }
+                ]
 
-            req = urllib.request.Request(
-                url,
-                data=json.dumps(payload).encode("utf-8"),
-                headers={
-                    "Authorization": f"Bearer {GROQ_API_KEY}",
-                    "Content-Type": "application/json"
-                }
-            )
-
-            with urllib.request.urlopen(req, timeout=40) as resp:
-                res_json = json.loads(resp.read().decode("utf-8"))
-                text = res_json["choices"][0]["message"]["content"]
-                return {
-                    "description": text,
-                    "provider": "groq",
+                payload = {
                     "model": selected_model,
-                    "mime_type": mime_type
+                    "messages": messages,
+                    "max_tokens": 1024
                 }
+
+                req = urllib.request.Request(
+                    url,
+                    data=json.dumps(payload).encode("utf-8"),
+                    headers={
+                        "Authorization": f"Bearer {GROQ_API_KEY}",
+                        "Content-Type": "application/json",
+                        "User-Agent": "OmniMind-AI-Backend/2.0"
+                    }
+                )
+
+                try:
+                    with urllib.request.urlopen(req, timeout=40) as resp:
+                        res_json = json.loads(resp.read().decode("utf-8"))
+                        text = res_json["choices"][0]["message"]["content"]
+                        return {
+                            "description": text,
+                            "provider": "groq",
+                            "model": selected_model,
+                            "mime_type": mime_type
+                        }
+                except urllib.error.HTTPError as e:
+                    err = e.read().decode("utf-8", errors="replace")
+                    logger.warning(f"Groq Vision HTTP Error {e.code} on model {selected_model}: {err}")
+                    last_err = RuntimeError(f"Groq Vision Error ({e.code}): {err}")
+                    if attempt_idx < len(models_to_try) - 1 and MultimodalService._is_transient_or_capacity_error(e.code, err):
+                        logger.info(f"Attempting Groq vision fallback from {selected_model} to {models_to_try[attempt_idx + 1]}")
+                        continue
+                    raise last_err
+                except Exception as e:
+                    logger.warning(f"Groq Vision connection error on model {selected_model}: {e}")
+                    last_err = e
+                    if attempt_idx < len(models_to_try) - 1:
+                        continue
+                    raise last_err
         else:
             raise ValueError(f"Vision not supported for provider '{provider}'")
 

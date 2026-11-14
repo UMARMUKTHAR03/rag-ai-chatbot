@@ -89,17 +89,17 @@ def run_live_verification():
     chat_payload = json.dumps({
         "message": "Respond with 'OmniMind AI Live Verified' and nothing else.",
         "model_provider": "groq",
-        "model_name": "llama-3.3-70b-versatile",
+        "model_name": "openai/gpt-oss-120b",
         "session_id": test_session,
         "use_rag": False
     }).encode("utf-8")
     st, body = send_request("POST", "/chat", {"Content-Type": "application/json"}, chat_payload)
-    print(f"\n2. Real Groq Text Generation (llama-3.3-70b-versatile): {st}")
+    print(f"\n2. Real Groq Text Generation (openai/gpt-oss-120b / fallback): {st}")
     print(f"   Body: {body[:250]}")
     assert "200" in st, f"Chat endpoint failed: {st}"
     chat_resp = json.loads(body)
     chat_data = chat_resp.get("data") if isinstance(chat_resp.get("data"), dict) else chat_resp
-    assert chat_data.get("model") == "llama-3.3-70b-versatile"
+    assert chat_data.get("model") in ["openai/gpt-oss-120b", "openai/gpt-oss-20b", "llama-3.3-70b-versatile"], f"Unexpected model: {chat_data.get('model')}"
     results["chat_text_gen"] = "PASSED"
 
     # 3. Document Ingestion (TXT document with specific fact)
@@ -170,27 +170,10 @@ def run_live_verification():
 
     # 7. Real Groq Whisper Audio Transcription with Intelligible Spoken Speech Sample
     speech_path = os.path.join(os.path.dirname(__file__), "test_speech.wav")
-    if os.path.exists(speech_path):
-        with open(speech_path, "rb") as f:
-            audio_bytes = f.read()
-    else:
-        # Fallback to synthesizing a clean PCM waveform
-        wav_buf = io.BytesIO()
-        sample_rate = 16000
-        duration = 1.0
-        n_samples = int(sample_rate * duration)
-        with wave.open(wav_buf, "wb") as w:
-            w.setnchannels(1)
-            w.setsampwidth(2)
-            w.setframerate(sample_rate)
-            frames = bytearray()
-            for i in range(n_samples):
-                t = float(i) / sample_rate
-                freq = 300.0 + 150.0 * math.sin(2.0 * math.pi * 2.0 * t)
-                val = int(14000.0 * math.sin(2.0 * math.pi * freq * t))
-                frames.extend(struct.pack("<h", val))
-            w.writeframes(frames)
-        audio_bytes = wav_buf.getvalue()
+    assert os.path.exists(speech_path), f"Required speech fixture missing: {speech_path}. Synthetic tones must never be used to claim transcription success."
+    with open(speech_path, "rb") as f:
+        audio_bytes = f.read()
+    assert len(audio_bytes) > 1000, "Speech sample file is corrupted or empty."
 
     aud_boundary = "----OmniMindAudioBoundary123"
     aud_body = bytearray()
@@ -210,8 +193,7 @@ def run_live_verification():
     assert audio_data.get("duration", 0) >= 0.5
     transcribed_text = audio_data.get("text", "").lower()
     print(f"   Transcribed Speech Text: '{transcribed_text}'")
-    if os.path.exists(speech_path):
-        assert any(word in transcribed_text for word in ["weather", "what", "like"]), f"Transcription missing expected spoken words: {transcribed_text}"
+    assert any(word in transcribed_text for word in ["weather", "what", "like"]), f"Transcription missing expected spoken words: {transcribed_text}"
     results["audio_transcription"] = "PASSED"
 
     # 8. Session Scoped Purge & Cleanup

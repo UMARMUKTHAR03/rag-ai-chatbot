@@ -65,7 +65,7 @@ def get_capabilities():
                 "Session-isolated semantic hybrid retrieval",
                 "Zero-hallucination source attribution with page numbers",
                 "Direct Groq Whisper audio transcription",
-                "Gemini 1.5 Flash and Groq Llama 3.3 multimodal inference",
+                "Gemini 3.8 Flash and Groq GPT-OSS multimodal inference",
                 "Browser-native and REST-compatible speech playback"
             ]
         }

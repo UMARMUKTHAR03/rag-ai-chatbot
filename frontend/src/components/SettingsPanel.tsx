@@ -100,11 +100,11 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ health, onRefreshH
           </div>
 
           <p className="text-xs text-slate-400">
-            Multimodal language & vision reasoning with Google Gemini 1.5 Flash.
+            Multimodal language & vision reasoning with Google Gemini 3.8 Flash (and Gemini 3.5 Flash-Lite).
           </p>
 
           <div className="text-[11px] font-mono text-slate-400 space-y-1">
-            <p>Chat Models: {health?.providers.gemini.chat_models?.join(', ') || 'gemini-1.5-flash'}</p>
+            <p>Chat Models: {health?.providers.gemini.chat_models?.join(', ') || 'gemini-3.8-flash'}</p>
             <p>Vision: Supported (Native Image Analysis)</p>
           </div>
         </div>
@@ -128,11 +128,11 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ health, onRefreshH
           </div>
 
           <p className="text-xs text-slate-400">
-            Ultra-fast inference with Llama 3.3 70B & Whisper Large v3 speech transcription on LPUs.
+            Ultra-fast inference with OpenAI GPT-OSS 120B / 20B & Whisper Large v3 speech transcription on LPUs.
           </p>
 
           <div className="text-[11px] font-mono text-slate-400 space-y-1">
-            <p>Chat Models: {health?.providers.groq.chat_models?.join(', ') || 'llama-3.3-70b-versatile'}</p>
+            <p>Chat Models: {health?.providers.groq.chat_models?.join(', ') || 'openai/gpt-oss-120b'}</p>
             <p>Audio STT: whisper-large-v3-turbo</p>
           </div>
         </div>
