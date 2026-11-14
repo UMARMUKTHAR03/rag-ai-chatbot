@@ -254,3 +254,31 @@ def test_model_selection_fallback_logic():
             )
         assert "401" in str(exc_info.value)
         assert mock_url_auth.call_count == 1
+
+def test_http_timeout_and_empty_response_handling():
+    import urllib.error
+    # 1. Test timeout handling during chat completion
+    with patch("core.multimodal.service.GROQ_API_KEY", "mock_groq_key"), patch("urllib.request.urlopen") as mock_url:
+        mock_url.side_effect = TimeoutError("The read operation timed out")
+        with pytest.raises(TimeoutError) as exc_info:
+            MultimodalService.chat_completion(
+                messages=[{"role": "user", "content": "hello"}],
+                provider="groq",
+                model="openai/gpt-oss-120b"
+            )
+        assert "timed out" in str(exc_info.value).lower()
+
+    # 2. Test empty candidate choices handling in Gemini
+    with patch("core.multimodal.service.GOOGLE_API_KEY", "mock_google_key"), patch("urllib.request.urlopen") as mock_url_gemini:
+        mock_empty_resp = MagicMock()
+        mock_empty_resp.read.return_value = b'{"candidates":[]}'
+        mock_empty_resp.__enter__.return_value = mock_empty_resp
+        mock_url_gemini.return_value = mock_empty_resp
+
+        with pytest.raises(ValueError) as exc_info:
+            MultimodalService.chat_completion(
+                messages=[{"role": "user", "content": "hello"}],
+                provider="gemini",
+                model="gemini-3.8-flash"
+            )
+        assert "empty candidate choices" in str(exc_info.value).lower()
