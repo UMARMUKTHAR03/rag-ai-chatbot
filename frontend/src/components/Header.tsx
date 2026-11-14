@@ -104,24 +104,24 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center gap-3">
           <div className="flex items-center bg-slate-950 border border-slate-800 rounded-lg p-0.5 text-xs">
             <button
-              onClick={() => setSelectedProvider('gemini')}
-              className={`px-2.5 py-1 rounded-md font-medium transition ${
-                selectedProvider === 'gemini'
-                  ? 'bg-slate-800 text-emerald-400'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              Gemini 2.0
-            </button>
-            <button
               onClick={() => setSelectedProvider('groq')}
               className={`px-2.5 py-1 rounded-md font-medium transition ${
                 selectedProvider === 'groq'
-                  ? 'bg-slate-800 text-emerald-400'
+                  ? 'bg-slate-800 text-teal-400 font-semibold'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
-              Groq Llama 3.3
+              Groq (Active)
+            </button>
+            <button
+              onClick={() => setSelectedProvider('gemini')}
+              className={`px-2.5 py-1 rounded-md font-medium transition ${
+                selectedProvider === 'gemini'
+                  ? 'bg-slate-800 text-emerald-400 font-semibold'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Gemini 2.5
             </button>
           </div>
 

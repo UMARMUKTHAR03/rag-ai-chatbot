@@ -104,7 +104,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ health, onRefreshH
           </p>
 
           <div className="text-[11px] font-mono text-slate-400 space-y-1">
-            <p>Chat Models: {health?.providers.gemini.chat_models?.join(', ') || 'gemini-2.0-flash'}</p>
+            <p>Chat Models: {health?.providers.gemini.chat_models?.join(', ') || 'gemini-2.5-flash'}</p>
             <p>Vision: Supported (Native Image Analysis)</p>
           </div>
         </div>

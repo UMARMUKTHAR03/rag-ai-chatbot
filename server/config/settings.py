@@ -26,10 +26,10 @@ MODEL_OPTIONS = {
     },
     "gemini": {
         "playground": "https://aistudio.google.com",
-        "chat_models": ["gemini-1.5-flash", "gemini-1.5-pro"],
-        "vision_models": ["gemini-1.5-flash", "gemini-1.5-pro"],
+        "chat_models": ["gemini-2.5-flash", "gemini-2.5-pro"],
+        "vision_models": ["gemini-2.5-flash", "gemini-2.5-pro"],
         "audio_models": [],
-        "models": ["gemini-1.5-flash", "gemini-1.5-pro"]
+        "models": ["gemini-2.5-flash", "gemini-2.5-pro"]
     }
 }
 
