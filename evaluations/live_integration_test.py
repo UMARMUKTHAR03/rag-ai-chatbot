@@ -257,8 +257,15 @@ def run_live_verification():
     # 9. Verify Deletion in Document Index
     st, body, _, _ = send_request("GET", f"/documents?session_id={test_session}&model_provider=groq")
     print(f"\n9. Verify Document Purge: {st}")
-    print(f"   Body: {body[:250]}")
-    assert "200" in st and ("\"document_count\": 0" in body or "\"documents\": []" in body)
+    print(f"   Raw Body: {body[:250]}")
+    assert "200" in st, f"Failed to retrieve document listing after purge: {st}"
+    purge_resp = json.loads(body)
+    assert purge_resp.get("status") == "success", f"Purge response status was not 'success': {purge_resp}"
+    purge_data = purge_resp.get("data", {})
+    print(f"   Parsed Document Purge Data: {purge_data}")
+    assert purge_data.get("document_count") == 0, f"Expected document_count == 0, got {purge_data.get('document_count')}"
+    assert purge_data.get("total_chunks") == 0, f"Expected total_chunks == 0, got {purge_data.get('total_chunks')}"
+    assert purge_data.get("documents") == [], f"Expected documents == [], got {purge_data.get('documents')}"
     results["document_purge_verified"] = "PASSED"
 
     print("\n" + "="*50)

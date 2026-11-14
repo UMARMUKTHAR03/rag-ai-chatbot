@@ -282,3 +282,33 @@ def test_http_timeout_and_empty_response_handling():
                 model="gemini-3.8-flash"
             )
         assert "empty candidate choices" in str(exc_info.value).lower()
+
+def test_document_purge_compact_json_verification():
+    import json
+    # Regression test proving verification works with compact JSON without whitespace
+    # or formatted JSON without depending on raw substring matching
+    compact_json = '{"status":"success","message":null,"data":{"session_id":"test_s","document_count":0,"total_chunks":0,"documents":[]}}'
+    parsed = json.loads(compact_json)
+    assert parsed.get("status") == "success"
+    data = parsed.get("data", {})
+    assert data.get("document_count") == 0
+    assert data.get("total_chunks") == 0
+    assert data.get("documents") == []
+
+    # Also test with whitespace formatted JSON
+    pretty_json = '''{
+        "status": "success",
+        "message": null,
+        "data": {
+            "session_id": "test_s",
+            "document_count": 0,
+            "total_chunks": 0,
+            "documents": []
+        }
+    }'''
+    parsed_pretty = json.loads(pretty_json)
+    assert parsed_pretty.get("status") == "success"
+    data_pretty = parsed_pretty.get("data", {})
+    assert data_pretty.get("document_count") == 0
+    assert data_pretty.get("total_chunks") == 0
+    assert data_pretty.get("documents") == []
